@@ -1,0 +1,410 @@
+<html>
+<head>
+<title>UOP data (somewhat) demystified "</title>
+</head>
+<body>
+<p> Last updated: 26 August 2022</p>
+<h1>Special thanks</h1>
+<p>
+UOP format derived by the source code of <a href = "https://github.com/cbnolok/LegacyMULConverter-N">LegacyMULConverter-N</a>.
+Also referenced code from <a href = "https://github.com/pincoide/Mythic-Package-Editor-EC-">Mythic-Package-Editor-EC-</a>.
+</p>
+<p>
+Without the work and gracefulness of others who shared their information and source, this would not be possible.
+</p>
+<h1> Purpose</h1>
+To provide a description of the UO UOP file format so one can read it. 
+<h1>What does the UOP format do?</h1>
+<p>
+The UOP format allows one to provide the data from many files into one file (similar to what a zip file does).
+Essentially, each entry is a file. So each gump artwork, tile artwork, multi information, sound data are separate files.
+So each entry (file) in a UOP is the corresponding data for each of those type (similar to what the entry in an idx file is).
+For maps, each entry represents contiguous map data blocks (the standard 196 byte data block as in the map#.mul file). The mapblock 
+data contained by that entry, starts at the block number corresponding to the entry id * 4096.  More on this later.
+</p>
+<h2>Background information</h2>
+<h3>Hashes</h3>
+<p>UOP format uses a hash number to identify each entry(file).  A hash is nothing more then a unique number 
+that is create based on a set of data. In UOP case this is a text string, that represents the source datafile for the entry.
+The hash algorithm used is a hashLittle2 format, and there is a code example (c++) in the uodata code repository. It takes a text string as
+its input, and creates a unsigned 64 bit hash value.  The hash string formats for the uo data types are:
+<table border="1">
+	<tr>
+		<th>UO Data type</th>
+		<th>Hash format</th>
+	</tr>
+	<tr>
+		<td>Art</td>
+		<td>build/artlegacymul/%08u.tga</td>
+	</tr>
+	<tr>
+		<td>Gump</td>
+		<td>build/gumpartlegacymul/%08u.tga/%08u.tga</td>
+	</tr>
+	<tr>
+		<td>Sound</td>
+		<td>build/soundlegacymul/%08u.dat</td>
+	</tr>
+	<tr>
+		<td>Multi</td>
+		<td>build/multicollection/%06u.bin.  Note, there is one hash: 0x126D1E99DDEDEE0A that is built using the string: build/multicollection/housing.bin </td>
+	</tr>
+	<tr>
+		<td>Map</td>
+		<td>build/map%ilegacymul/%.8u.dat</td>
+	</tr>
+</table>
+Note: These strings are case sensitive! This table uses c++ format specifiers.  Essentially, the entry id (so gump id 1), 
+would create a hashformat: build/gumpart/00000001.tga
+That hash string, would be what is used in the hash little 2 algorithm, to create a 
+hash identifier for the entry.
+</p>
+<h3>Table entry format</h3>
+<p>
+Before going into the overall structure of the file, it is helpful to understand the format
+of each table_entry. The UOP file contains tables of entry structures (table_entry), that
+indicate the format, offset into the file, along with other information about each section of data.
+This format is:
+<table border="1">
+	<tr>
+		<th>Name</th>
+		<th>Data type</th>
+		<th>Purpose</th>
+	<tr>
+	<tr>
+		<td>offset</td>
+		<td>std::int64_t</td>
+		<td>The offset from the beginning of the uop file, where this data is located</td>
+	</tr>
+	<tr>
+		<td>header_length</td>
+		<td>std::uint32_t</td>
+		<td>If this data has a header (most legacy data does), the length of that data. To get to the actual data, one would offset by the offset + header_length</td>
+	</tr>
+	<tr>
+		<td>compressed_length</td>
+		<td>std::uint32_t</td>
+		<td>If the data is compressed, the length (in bytes) of the data</td>
+	</tr>
+	<tr>
+		<td>decompressed_length</td>
+		<td>std::uint32_t</td>
+		<td>The length (in bytes) of the data</td>
+	</tr>
+	<tr>
+		<td>identifier</td>
+		<td>std::uint64_t</td>
+		<td>The hash value for this entry</td>
+	</tr>
+	<tr>
+		<td>data_block_hash</td>
+		<td>std::uint32_t</td>
+		<td>The hash value (alder32 hash) for the data stored by this entry.  I dont believe the data the hash is on includes any header (the data between offset and header_length)</td>
+	</tr>
+	<tr>
+		<td>compression</td>
+		<td>std::int16_t</td>
+		<td>Indicator if the data is compressed.Values: 0 - no compression, 1 - zlib compression</td>
+	</tr>
+</table>
+</p>
+<h2>General UOP layout</h2>
+<p>
+The UOP file is has three parts: General header, tables of table_entry (as described above), and the actual data. In general it is:
+The header is laid out as:
+<table border="1">
+	<tr>
+		<th>Content</th>
+		<th>Size in bytes</th>
+		<th>Notes</th>
+	</tr>
+	<tr>
+		<td>Signature</td>
+		<td>4</td>
+		<td>Indicates a uop file, fixed value of: 0x50594D  ('MYP')</td>
+	</tr>
+	<tr>
+		<td>Version</td>
+		<td>4</td>
+		<td>Indicates the version of uop file. This info is based on version 5, and believed to be valid for previous versions</td>
+	</tr>
+	<tr>
+		<td>Timestamp?</td>
+		<td>4</td>
+		<td>Perhaps a timestamp of the file?</td>
+	</tr>
+	<tr>
+		<td>Table offset</td>
+		<td>8 bytes,std::uint64_t </td>
+		<td>Offset(from the top of the file) to where the first table of table_entries resides</td>
+	</tr>
+	<tr>
+		<td>Table size</td>
+		<td>4bytes,std::uint32_t </td>
+		<td>Max number of entries in a single table, currently 1000</td>
+	</tr>
+	<tr>
+		<td>File count</td>
+		<td>4bytes,std::uint32_t </td>
+		<td>Total number of files contained in this uop file</td>
+	</tr>
+	<tr>
+		<td>Unknown</td>
+		<td>4bytes</td>
+		<td>Value is 1, perhaps modified count?</td>
+	</tr>
+	<tr>
+		<td>Unknown</td>
+		<td>4bytes</td>
+		<td>Value is 1</td>
+	</tr>
+	<tr>
+		<td>Unknown</td>
+		<td>4bytes</td>
+		<td>Value is 0</td>
+	</tr>
+</table>
+</p>
+<p>
+For each table (of table entries), the format is the following:
+<table border="1">
+	<tr>
+		<th>Type</th>
+		<th>Size</th>
+		<th>Note</th>
+	</tr>
+	<tr>
+		<td>Number of entries</th>
+		<td>4 bytes, std::uint32_t</td>
+		<td>The number of entries in this table</td>
+	</tr>
+	<tr>
+		<td>Next table offset</th>
+		<td>8 bytes, std::uint64_t</td>
+		<td>The offset (from top of file) to the next table. 0 if not another</td>
+	</tr>
+	<tr>
+		<td>[table_entry]</th>
+		<td>34 bytes (size of a single table entry) * number of entries</td>
+		<td></td>
+	</tr>
+</table>
+</p>
+<h2>Data formats</h2>
+<p>All data is accessed by going to offset (seeking from the top of the uop file) specified in the table_entry offset + the table_entry header_length</p>
+<h3>Art</h3>
+<p> The format of the data has the same format as data in the art.mul for tiles with id 0 - 0x3FFF.  For tile ids 0x4000 and above, the first four bytes 
+is unknown (so can be skipped over). After that , it is the same data format as art.mul.
+</p>
+<h4> Terrain type tiles</h4>
+<p> Once the stream is positioned, this is the same as reading from art.mul.  Example c++ code:
+</p>
+<pre>
+//=================================================================================
+auto processTerrainData(std::uint32_t size,std::istream &input) ->image_t {
+	auto image = image_t(0,0) ;
+	if (size >0){
+		image = image_t(44,44) ;
+		auto pixel = std::uint16_t(0) ;
+		auto run = 2 ;
+		auto xloc = 21 ;
+		for (auto height = 0 ; height <22;height++){
+			for (auto offset = 0 ; offset < run ; offset++){
+				input.read(reinterpret_cast<char*>(&pixel),2);
+				image.pixel(xloc+offset, height) = pixel ;
+			}
+			xloc--;
+			run += 2;
+		}
+		run = 44 ;
+		xloc = 0 ;
+		for (auto height = 22 ; height <44;height++){
+			for (auto offset = 0 ; offset < run ; offset++){
+				input.read(reinterpret_cast<char*>(&pixel),2);
+				image.pixel(xloc+offset, height) = pixel ;
+			}
+			xloc++;
+			run -= 2;
+		}
+	}
+	return image ;
+}
+</pre>
+<h4> Run type tiles (art tile)</h4>
+<p> The steam should be positioned 4 bytes  in from the normal offset. The data is then read like from art.mul. A c++ example:
+</p>
+
+<pre>
+//=================================================================================
+auto processArtData(std::uint32_t size,std::istream &input) ->image_t {
+	auto image = image_t(0,0) ;
+	if (size>0){
+		auto pixel = std::uint16_t(0) ;
+		// Read in the width
+		input.read(reinterpret_cast<char*>(&pixel),2) ;
+		auto width = pixel ;
+		// Read in the height
+		input.read(reinterpret_cast<char*>(&pixel),2) ;
+		auto height = pixel ;
+		// Check to ensure valid width/height
+		if (!((width >=1024) || (width == 0) || (height >=1024) || (height==0))){
+			image = image_t(width,height) ;
+			// Set the beginning of the table
+			auto tableoffset = static_cast<int>(input.tellg()) ;
+			// Set where the data begins
+			auto dataoffset = tableoffset + (height*2);
+			auto x = 0 ;
+			auto y = 0 ;
+			input.seekg(tableoffset + (2*y),std::ios::beg);
+			// the offset into the data
+			input.read(reinterpret_cast<char*>(&pixel),2) ;
+			auto offset = dataoffset + (pixel*2) ;
+			input.seekg(offset,std::ios::beg);
+			while (y < height){
+				// the data is structure, as x offset, and then the amount (run)
+				// Set the proper entry
+				input.read(reinterpret_cast<char*>(&pixel),2) ;
+				auto xoff = pixel ;
+				input.read(reinterpret_cast<char*>(&pixel),2) ;
+				auto run = pixel ;
+				// So now we do some checking
+				if (xoff + run >=2048){
+					break;
+				}
+				else if ((xoff + run) != 0) {
+					x +=xoff ;
+					for (auto j = 0 ; j<run;++j) {
+						input.read(reinterpret_cast<char*>(&pixel),2) ;
+						image.pixel(x+j, y) = pixel ;
+					}
+					x+=run ;
+				}
+				else {
+					x = 0 ;
+					y++ ;
+					if (y < height){
+						input.seekg(tableoffset + 2*y,std::ios::beg);
+						input.read(reinterpret_cast<char*>(&pixel),2) ;
+						auto offset = dataoffset + (pixel*2) ;
+						input.seekg(offset,std::ios::beg);
+					}
+				}
+			}
+		}
+	}
+	return image ;
+}
+</pre>
+<h3>Gump</h3>
+<p>
+	The first 4 bytes represent the width of the gump. The second 4 bytes is the height. After that, it is the same format as the gumpart.mul file.
+	One would position the the stream, read the width and height from the stream, and then process like from gumpart.mul.  A c++ example once obtaining the width and height:
+</p>
+<pre>
+//=================================================================================
+auto processGump(int width,int height,std::uint32_t size,std::istream &input) ->image_t {
+	auto tableoffset = static_cast< std::uint64_t >(input.tellg()) ;
+	auto offset= std::uint32_t(0)  ;
+	auto offset1 = std::uint32_t(0) ;
+	auto color = std::uint16_t(0) ;
+	auto run = std::uint16_t(0) ;
+	auto blockcount = 0 ;
+	auto image = image_t(width,height);
+	for (auto y=0;y < height;++y) {
+		if (y < (height -1)) {
+			input.seekg(tableoffset+y*4,std::ios::beg) ;
+			input.read(reinterpret_cast< char* >(&offset),4) ;
+			input.read(reinterpret_cast< char* >(&offset1),4);
+			blockcount = offset1 - offset ;
+		}
+		else {
+			input.seekg(tableoffset + y*4) ;
+			input.read(reinterpret_cast<char*>(&offset),4);
+			blockcount = size/4 - offset;
+		}
+		input.seekg(tableoffset + offset*4) ;
+		auto x = 0 ;
+		for (auto entry =0 ; entry < blockcount;entry++){
+			input.read(reinterpret_cast<char*>(&color),2);
+			input.read(reinterpret_cast<char*>(&run),2);
+			for (auto j=0 ; j < run;j++){
+				image.pixel(x,y) = color ;
+				x++ ;
+			}
+
+		}
+	}
+	return image ;
+}
+</pre>
+<h3>Map</h3>
+<p>
+Each entry represents a starting map block of index *4096. The data itself is a series of map blocks (196) bytes, as identified in map mul files.
+</p>
+<h3>Multi</h3>
+<p>
+This data is compressed, so needs to be uncompress with zlib. The data will contain consists of a header, and a series of multi_entry. 
+<table border="1">
+	<tr>
+		<th>Size in bytes</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>unknown</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>Number of entries</td>
+	</tr>
+	<tr>
+		<td>variable</td>
+		<td>[multi entry]</td>
+	</tr>
+</table>	
+
+</p>
+<p>A multi_entry is formatted as follows:
+<table border="1">
+	<tr>
+		<th>Size in bytes</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>tile id </td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>x offset from center </td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>y offset from center </td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>z (alt) offset from center </td>
+	</tr>
+	<tr>
+		<td>2</td>
+		<td>Flag indicating if background. How it maps to the standard flag values in tiledata.mul: 0 = bit 1, 257 = 0x800,1 = unknown mapping, not used </td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>number of clilocs contained </td>
+	</tr>
+	<tr>
+		<td>4 * number of clilocs</td>
+		<td>[clilocs] (each is 4 bytes) </td>
+	</tr>
+</table>
+</p>
+
+<h3>Sound</h3>
+<p>
+	This data is exactly like what is in the sound mul file.
+</p>
+
+</body>
+</html>
