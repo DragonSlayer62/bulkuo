@@ -1,0 +1,204 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="source\action\actions.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\actutility.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\artwork\animation.cpp">
+      <Filter>source\artwork</Filter>
+    </ClCompile>
+    <ClCompile Include="source\artwork\art.cpp">
+      <Filter>source\artwork</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\create.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\exist.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\extract.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\flag.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\artwork\gump.cpp">
+      <Filter>source\artwork</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\hash.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\hueaccess.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\idx.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\merge.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\names.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\artwork\texture.cpp">
+      <Filter>source\artwork</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\tileinfo.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\uop.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\uowave.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\action\uophash.cpp">
+      <Filter>source\action</Filter>
+    </ClCompile>
+    <ClCompile Include="source\uodata\multicollection.cpp">
+      <Filter>source\uodata</Filter>
+    </ClCompile>
+    <ClCompile Include="source\artwork\hue.cpp">
+      <Filter>source\artwork</Filter>
+    </ClCompile>
+    <ClCompile Include="source\argument.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\catlabel.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\idlist.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\types.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="source\action\actions.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\actutility.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\animation.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\art.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\bitmap.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\create.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\exist.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\extract.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\flag.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\utility\strutil.hpp">
+      <Filter>source\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\gump.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\hash.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\hueaccess.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\idx.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\merge.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\names.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\texture.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\tileinfo.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\uop.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\uowave.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\action\uophash.hpp">
+      <Filter>source\action</Filter>
+    </ClInclude>
+    <ClInclude Include="source\uodata\multicollection.hpp">
+      <Filter>source\uodata</Filter>
+    </ClInclude>
+    <ClInclude Include="source\artwork\hue.hpp">
+      <Filter>source\artwork</Filter>
+    </ClInclude>
+    <ClInclude Include="source\argument.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\catlabel.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\idlist.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\types.hpp">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\asset\wf.ico">
+      <Filter>Resources</Filter>
+    </Image>
+    <Image Include="assets\wf.ico" />
+    <Image Include="assets\bitmap1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="changelog.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="source">
+      <UniqueIdentifier>{89be4865-bafa-48ea-baee-16900e0b9230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\uodata">
+      <UniqueIdentifier>{0acf5bcb-94f7-4055-bfa9-8a0c966633e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\utility">
+      <UniqueIdentifier>{bc8313d0-ca61-4daa-a7cf-789762127f15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\action">
+      <UniqueIdentifier>{fbf3f5fc-6033-464f-82ab-b12cac92b5d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\artwork">
+      <UniqueIdentifier>{ffd7d918-975f-4337-96f9-4ec286f32b53}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{055cb0c3-e67b-4e0a-9c73-402a4d716415}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="assets\Resource.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

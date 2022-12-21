@@ -82,7 +82,7 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
     auto mapping = ultima::createIDTableMapping(input, hashset, offsets);
     auto fileflag = std::ios::binary ;
     if (type == datatype_t::multi){
-        fileflag=0;
+        fileflag=std::ios::in;
     }
     for (auto const &[id,entry]:mapping){
         if (args.id(id)){

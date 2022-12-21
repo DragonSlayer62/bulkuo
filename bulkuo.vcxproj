@@ -17,19 +17,21 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\asset\wf.ico" />
+    <Image Include="assets\bitmap1.bmp" />
+    <Image Include="assets\wf.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="assets\Resource.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\actions\actions.cpp" />
-    <ClCompile Include="source\actions\actutility.cpp" />
-    <ClCompile Include="source\actions\create.cpp" />
-    <ClCompile Include="source\actions\exists.cpp" />
-    <ClCompile Include="source\actions\extract.cpp" />
-    <ClCompile Include="source\actions\merge.cpp" />
-    <ClCompile Include="source\actions\names.cpp" />
-    <ClCompile Include="source\actions\uophash.cpp" />
+    <ClCompile Include="source\action\actions.cpp" />
+    <ClCompile Include="source\action\actutility.cpp" />
+    <ClCompile Include="source\action\create.cpp" />
+    <ClCompile Include="source\action\exist.cpp" />
+    <ClCompile Include="source\action\extract.cpp" />
+    <ClCompile Include="source\action\merge.cpp" />
+    <ClCompile Include="source\action\names.cpp" />
+    <ClCompile Include="source\action\uophash.cpp" />
     <ClCompile Include="source\artwork\animation.cpp" />
     <ClCompile Include="source\artwork\art.cpp" />
     <ClCompile Include="source\artwork\gump.cpp" />
@@ -43,21 +45,21 @@
     <ClCompile Include="source\uodata\tileinfo.cpp" />
     <ClCompile Include="source\uodata\uop.cpp" />
     <ClCompile Include="source\uodata\uowave.cpp" />
-    <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\argument.cpp" />
     <ClCompile Include="source\types.cpp" />
-    <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\catlabel.cpp" />
+    <ClCompile Include="source\idlist.cpp" />
+    <ClCompile Include="source\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="source\actions\actions.hpp" />
-    <ClInclude Include="source\actions\actutility.hpp" />
-    <ClInclude Include="source\actions\create.hpp" />
-    <ClInclude Include="source\actions\exists.hpp" />
-    <ClInclude Include="source\actions\extract.hpp" />
-    <ClInclude Include="source\actions\merge.hpp" />
-    <ClInclude Include="source\actions\names.hpp" />
-    <ClInclude Include="source\actions\uophash.hpp" />
+    <ClInclude Include="source\action\actions.hpp" />
+    <ClInclude Include="source\action\actutility.hpp" />
+    <ClInclude Include="source\action\create.hpp" />
+    <ClInclude Include="source\action\exist.hpp" />
+    <ClInclude Include="source\action\extract.hpp" />
+    <ClInclude Include="source\action\merge.hpp" />
+    <ClInclude Include="source\action\names.hpp" />
+    <ClInclude Include="source\action\uophash.hpp" />
     <ClInclude Include="source\utility\strutil.hpp" />
     <ClInclude Include="source\artwork\animation.hpp" />
     <ClInclude Include="source\artwork\art.hpp" />
@@ -121,7 +123,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalIncludeDirectories>source;source\zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>source;source\zlib;source\utility</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +140,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <LanguageStandard_C>stdc11</LanguageStandard_C>
-      <AdditionalIncludeDirectories>source;source\zlib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>source;source\zlib;source\utility</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

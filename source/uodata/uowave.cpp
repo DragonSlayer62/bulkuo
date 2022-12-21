@@ -206,7 +206,7 @@ namespace ultima{
         std::string name = buffer.data();
         if (!name.empty()) {
             auto path = std::filesystem::path(name);
-            name = path.stem();
+            name = path.stem().string();
         }
         return name ;
     }

@@ -22,7 +22,7 @@ namespace ultima{
     //=================================================================================
     auto gatherIDXOffsets(std::ifstream &input) ->std::vector<size_t> {
         input.seekg(0,std::ios::end);
-        auto size = input.tellg() ;
+        auto size = static_cast<size_t>(input.tellg()) ;
         auto count = size/12 ;
         auto rvalue = std::vector<size_t>(count,0);
         for (size_t i = 0 ; i < count ; ++i){
