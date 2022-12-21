@@ -17,7 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\..\asset\wf.ico" />
-    <Image Include="assets\bitmap1.bmp" />
     <Image Include="assets\wf.ico" />
   </ItemGroup>
   <ItemGroup>

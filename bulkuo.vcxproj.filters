@@ -168,7 +168,6 @@
       <Filter>Resources</Filter>
     </Image>
     <Image Include="assets\wf.ico" />
-    <Image Include="assets\bitmap1.bmp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="readme.md" />

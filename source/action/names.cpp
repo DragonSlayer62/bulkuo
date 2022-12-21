@@ -31,7 +31,6 @@ auto noNames(const argument_t &args,datatype_t type) ->void {
 //==================================================================================
 // Constants used
 //=================================================================================
-
 //=================================================================================
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> names_mapping{
     {datatype_t::art,noNames},{datatype_t::info,infoName},
@@ -39,6 +38,38 @@ std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> names_map
     {datatype_t::gump,noNames},{datatype_t::animation,noNames},
     {datatype_t::hue,hueName},{datatype_t::multi,multiName}
 };
+
+//=================================================================================
+auto santizeName(const std::string& name) -> std::string {
+    auto temp = strutil::trim(name);
+    if (!temp.empty()) {
+        auto pos = temp.find(">");
+        while (pos != std::string::npos) {
+            temp.replace(pos, 1, "-");
+            pos = temp.find(">");
+        }
+        pos = temp.find("?");
+        while (pos != std::string::npos) {
+            temp.replace(pos, 1, "");
+            pos = temp.find("?");
+        }
+        pos = temp.find("/");
+        while (pos != std::string::npos) {
+            temp.replace(pos, 1, "-");
+            pos = temp.find("/");
+        }
+        pos = temp.find("\\");
+        while (pos != std::string::npos) {
+            temp.replace(pos, 1, "-");
+            pos = temp.find("\\");
+        }
+        if (temp.find_first_not_of("-") == std::string::npos) {
+            temp = "";
+        }
+        return temp;
+    }
+
+}
 
 //=================================================================================
 auto infoName(const argument_t &arg,datatype_t type) ->void {
@@ -65,8 +96,9 @@ auto infoName(const argument_t &arg,datatype_t type) ->void {
                 name = info.land(id).name;
             }
             else{
-                name = info.item(id).name;
+                name = info.item(id-0x4000).name;
             }
+            name = santizeName(name);
             if (!name.empty()){
                 output << id << " = "<<name<<"\n";
             }
@@ -117,19 +149,7 @@ auto hueName(const argument_t &arg,datatype_t type) ->void {
     for (std::uint32_t id=0 ; id<maxid;id++){
         if (arg.id(id)){
             auto name = ultima::nameForHue(hue,id);
-            name = strutil::trim(name) ;
-            auto pos = name.find(">");
-            if (pos!=std::string::npos){
-                name.replace(pos,1,"-");
-            }
-            pos = name.find("?");
-            if (pos!= std::string::npos){
-                name = "";
-            }
-            pos =name.find_first_not_of("-");
-            if (pos== std::string::npos){
-                name ="";
-            }
+            name = santizeName(name);
             if(!name.empty()){
                 output <<id <<" = " << name << "\n";
             }
