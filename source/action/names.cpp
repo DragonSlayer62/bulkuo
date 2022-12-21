@@ -121,7 +121,7 @@ auto multiName(const argument_t &arg,datatype_t type) ->void {
     }
 
     for (const auto &[id,name]:ultima::multi_entry_t::names){
-        output <<id <<" = " << name <<"\n";
+        output <<id <<" = " << santizeName(name) <<"\n";
     }
 }
 //=====================================================================================

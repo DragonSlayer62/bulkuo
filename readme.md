@@ -126,4 +126,34 @@ There is a *Xcode* project.  Open **bulkuo.xcodeproj** in XCode
 - Change to that directory. (i.e. `cd build`)  
 - Generate the makefiles. `cmake .. -DCMAKE_BUILD_TYPE=Release`.  
     - For *Window* and *macOS* use the `-G"NMAKE Makefiles" ` and `-G"Unix MakeFiles" ` respectively.
-- Build it.  `cmake --build . ` 
+- Build it.  `cmake --build . `   
+# Examples  
+## Creating labels automatically  
+- Prerequisite  
+    - Directory with three subdirectories: category, label, uo  
+    - Tiledata.mul and artLegacyMUL.uop in the uo subdirectory  
+    - **bulkuo** executable is in the main directory.  
+- Goal
+    - Create labels and categories so artwork is binned in either an item or land subdirectory with a name appended to the id filename.  
+- Enter: `./bulkuo --info --name uo/tiledata.mul label/tilename.txt`  
+    - This extracts names for each tile id that has a name in the mul file and puts it into "label" format in *label/tilename.txt*  
+    - Edit the names, or add new entries if desired in *label/tilename.txt*  
+- Create a text file, *sort.txt* in the *category* subdirectory with the following two lines:   
+    - **land = 0x0-0x3fff**  
+    - **item = 0x4000-0x10000**  
+- Enter: `./bulkuo --extract --art --label=label/tilename.txt --category=category/sort.txt uo/artLegacyMUL.uop artwork`  
+    - This will create artwork in the newly created *artwork* subdirectory. The images will be sorted into land/terrain subdirectories, and have the name append to the tileid.  
+## Better categorization  
+- Copy the *label/tilename.txt* file to *category/types.txt*  
+- Open the *category/types.txt* and replace the "-" with a comma
+- Import *category/types.txt* as a csv file to a spreadsheet
+- Sort by the name  
+    - This effectively groups all tiles of the same name together.
+- Use this to create a more robust *sort.txt* file  
+    - terrain/rock = 10,20,21, etc  (based on entries in the spreadsheet)  
+        - Ids are just examples, not actual rocks.  
+    - item/rock = 20000-20020  
+        - Ids are just examples, not actual rocks.  
+
+    
+    
