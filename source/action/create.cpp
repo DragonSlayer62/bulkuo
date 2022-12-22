@@ -100,49 +100,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
             auto entry = ultima::table_entry();
             auto hash = strutil::format(hashformat,id);
             entry.identifier = ultima::hashLittle2(hash);
-            switch(type) {
-                case datatype_t::gump:{
-                    bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
-                    buffer = dataForGump(bitmap);
-                    entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-                    
-                    break;
-                }
-                case datatype_t::art:{
-                    bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
-                    if (id <0x4000){
-                        buffer  = dataForTerrain(bitmap);
-                    }
-                    else {
-                        buffer = dataForItem(bitmap);
-                    }
-                    entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-                    
-                    break;
-                }
-                case datatype_t::sound:{
-                    auto txtpath = outputpath;
-                    txtpath.replace_extension(".txt") ;
-                    auto name = nameInFile(txtpath);
-                    
-                    auto wav = ultima::uowave_t(input);
-                    buffer = wav.createUO(name);
-                    entry.decompressed_length =static_cast<std::uint32_t>(buffer.size());
-                    break;
-                }
-                case datatype_t::multi:{
-                    auto multi = ultima::multi_entry_t();
-                    multi.load(input);
-                    buffer = multi.data(true);
-                    entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-                    buffer = ultima::compressUOPData(buffer);
-                    entry.compression=1;
-                    break;
-                }
-                default:{
-                    throw std::runtime_error("Uop creation not supported.");
-                }
-            }
+            createUOPEntry(type,id, path,input,buffer, entry);
             entry.compressed_length =static_cast<std::uint32_t>(buffer.size());
             entry.data_block_hash=ultima::hashAdler32(buffer);
             entry.offset = static_cast<std::uint64_t>(output.tellp());
@@ -227,53 +185,7 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
                 if (!input.is_open()){
                     throw std::runtime_error("Unable to open: "s + path.string());
                 }
-                switch(type) {
-                    case datatype_t::gump:{
-                        bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
-                        auto [width,height] = bitmap.size();
-                        std::copy(reinterpret_cast<std::uint8_t*>(&height),reinterpret_cast<std::uint8_t*>(&height)+2,reinterpret_cast<std::uint8_t*>(&entry.length));
-                        std::copy(reinterpret_cast<std::uint8_t*>(&width),reinterpret_cast<std::uint8_t*>(&width)+2,reinterpret_cast<std::uint8_t*>(&entry.length)+2);
-                        buffer = dataForGump(bitmap);
-                        break;
-                    }
-                    case datatype_t::texture:{
-                        bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
-                        auto [width,height] = bitmap.size();
-                        entry.extra = (width==128?1:0);
-                        buffer = dataForTexture(bitmap);
-                        
-                       break;
-                    }
-                    case datatype_t::art:{
-                        bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
-                        if (id < 0x4000){
-                            buffer = dataForTerrain(bitmap);
-                        }
-                        else {
-                            buffer = dataForItem(bitmap);
-                        }
-                        break;
-                    }
-                    case datatype_t::sound:{
-                        entry.extra = id +1 ;
-                        auto wav = ultima::uowave_t(input);
-                        auto secondpath = path ;
-                        secondpath.replace_extension(".txt");
-                        auto name = nameInFile(secondpath);
-                        buffer = wav.createUO(name);
-                        break;
-                    }
-                    case datatype_t::multi:{
-                        auto multi = ultima::multi_entry_t() ;
-                        multi.load(input);
-                        buffer = multi.data(false);
-                        break;
-                    }
-                    default:{
-                        throw std::runtime_error("Type does not support idx/mul creation.");
-                    }
-                        
-                }
+                createIDXEntry(type, id,path, input,buffer,entry)   ;
                 entry.length = static_cast<std::uint32_t>(buffer.size());
                 mul.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
             }
