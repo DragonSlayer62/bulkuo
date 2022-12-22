@@ -17,29 +17,29 @@ namespace ultima {
     // Define flagnames
     //=================================================================================
     const std::map<std::string,std::uint64_t> flag_t::flagname_masks{
-        {"background"s,0x1},{"weapon"s,0x2},{"transparent"s,0x4},{"translucent"s,0x8},
-        {"wall"s,0x10},{"damaging"s,0x20},{"impassable"s,0x40},{"wet"s,0x80},
-        {"bit9"s,0x100},{"surface"s,0x200},{"climbable"s,0x400},{"stackable"s,0x800},
-        {"window"s,0x1000},{"noshoot"s,0x2000},{"articlea"s,0x4000},{"articlean"s,0x8000},
-        {"articlethe"s,0x10000},{"foliage"s,0x20000},{"partialhue"s,0x40000},{"nohouse"s,0x80000},
-        {"map"s,0x100000},{"container"s,0x200000},{"wearable"s,0x400000},{"lightsource"s,0x800000},
-        {"animation"s,0x1000000},{"hoverover"s,0x2000000},{"nodiagnol"s,0x4000000},{"armor"s,0x8000000},
-        {"roof"s,0x10000000},{"door"s,0x20000000},{"stairback"s,0x40000000},{"stairright"s,0x80000000},
-        {"alphablend"s,0x100000000},{"usenewart"s,0x200000000},{"artused"s,0x400000000},{"bit36"s,0x800000000},
-        {"noshadow"s,0x1000000000},{"pixelbleed"s,0x2000000000},{"playanimonce"s,0x4000000000},{"bit40"s,0x8000000000},
-        {"multimovable"s,0x10000000000},{"bit42"s,0x20000000000},{"bit43"s,0x40000000000},{"bit44"s,0x80000000000},
-        {"bit45"s,0x100000000000},{"bit46"s,0x200000000000},{"bit47"s,0x400000000000},{"bit48"s,0x800000000000},
-        {"bit49"s,0x1000000000000},{"bit50"s,0x2000000000000},{"bit51"s,0x4000000000000},{"bit52"s,0x8000000000000},
-        {"bit53"s,0x10000000000000},{"bit54"s,0x20000000000000},{"bit55"s,0x40000000000000},{"bit56"s,0x80000000000000},
-        {"bit57"s,0x100000000000000},{"bit58"s,0x200000000000000},{"bit59"s,0x400000000000000},{"bit60"s,0x800000000000000},
-        {"bit61"s,0x1000000000000000},{"bit62"s,0x2000000000000000},{"bit63"s,0x4000000000000000},{"bit64"s,0x8000000000000000}
+        {"background"s,0x1ull},{"weapon"s,0x2ull},{"transparent"s,0x4ull},{"translucent"s,0x8ull},
+        {"wall"s,0x10ull},{"damaging"s,0x20ull},{"impassable"s,0x40ull},{"wet"s,0x80ull},
+        {"bit9"s,0x100ull},{"surface"s,0x200ull},{"climbable"s,0x400ull},{"stackable"s,0x800ull},
+        {"window"s,0x1000ull},{"noshoot"s,0x2000ull},{"articlea"s,0x4000ull},{"articlean"s,0x8000ull},
+        {"articlethe"s,0x10000ull},{"foliage"s,0x20000ull},{"partialhue"s,0x40000ull},{"nohouse"s,0x80000ull},
+        {"map"s,0x100000ull},{"container"s,0x200000ull},{"wearable"s,0x400000ull},{"lightsource"s,0x800000ull},
+        {"animation"s,0x1000000ull},{"hoverover"s,0x2000000ull},{"nodiagnol"s,0x4000000ull},{"armor"s,0x8000000ull},
+        {"roof"s,0x10000000ull},{"door"s,0x20000000ull},{"stairback"s,0x40000000ull},{"stairright"s,0x80000000ull},
+        {"alphablend"s,0x100000000ull},{"usenewart"s,0x200000000ull},{"artused"s,0x400000000ull},{"bit36"s,0x800000000ull},
+        {"noshadow"s,0x1000000000ull},{"pixelbleed"s,0x2000000000ull},{"playanimonce"s,0x4000000000ull},{"bit40"s,0x8000000000ull},
+        {"multimovable"s,0x10000000000ull},{"bit42"s,0x20000000000ull},{"bit43"s,0x40000000000ull},{"bit44"s,0x80000000000ull},
+        {"bit45"s,0x100000000000ull},{"bit46"s,0x200000000000ull},{"bit47"s,0x400000000000ull},{"bit48"s,0x800000000000ull},
+        {"bit49"s,0x1000000000000ull},{"bit50"s,0x2000000000000ull},{"bit51"s,0x4000000000000ull},{"bit52"s,0x8000000000000ull},
+        {"bit53"s,0x10000000000000ull},{"bit54"s,0x20000000000000ull},{"bit55"s,0x40000000000000ull},{"bit56"s,0x80000000000000ull},
+        {"bit57"s,0x100000000000000ull},{"bit58"s,0x200000000000000ull},{"bit59"s,0x400000000000000ull},{"bit60"s,0x800000000000000ull},
+        {"bit61"s,0x1000000000000000ull},{"bit62"s,0x2000000000000000ull},{"bit63"s,0x4000000000000000ull},{"bit64"s,0x8000000000000000ull}
     };
     //================================================================================
     auto flag_t::flag_header(const std::string &sep) ->std::string {
         auto label = std::string();
         for (auto j=0 ; j<64;j++){
             auto mask = std::uint64_t(1)<<j ;
-            auto iter=std::find_if(flagname_masks.begin(),flagname_masks.end(),[mask](const std::pair<std::string,std::uint16_t> &value){
+            auto iter=std::find_if(flagname_masks.begin(),flagname_masks.end(),[mask](const std::pair<std::string,std::uint64_t> &value){
                 return std::get<1>(value) == mask ;
             });
             if (iter != flagname_masks.end()){
