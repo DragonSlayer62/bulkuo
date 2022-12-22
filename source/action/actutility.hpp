@@ -13,6 +13,7 @@
 
 #include "../uodata/uop.hpp"
 #include "../uodata/idx.hpp"
+#include "../uodata/tileinfo.hpp"
 
 #include "../types.hpp"
 #include "../argument.hpp"
@@ -29,4 +30,5 @@ auto unionOfId(const std::set<std::uint32_t> &ids, const std::map<std::uint32_t,
 auto minIDXForType(datatype_t type) ->std::uint32_t ;
 auto createUOPEntry(datatype_t type, std::uint32_t id,std::filesystem::path &path, std::ifstream &input,std::vector<std::uint8_t> &buffer, ultima::table_entry &entry) ->void ;
 auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &path, std::ifstream &input,std::vector<std::uint8_t> &buffer, ultima::idx_t &entry) ->void;
+auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t &info)->void;
 #endif /* actutility_hpp */

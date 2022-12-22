@@ -122,7 +122,8 @@ auto unionOfId(const std::set<std::uint32_t> &ids, const std::map<std::uint32_t,
 static std::map<datatype_t,std::uint32_t> min_idx_tileid {
     {datatype_t::gump,0xFFFe},{datatype_t::art,0x13ffd},
     {datatype_t::sound,0xFFE},{datatype_t::multi,0x21ff},
-    {datatype_t::texture,0x3FFF},{datatype_t::animation,0}
+    {datatype_t::texture,0x3FFF},{datatype_t::animation,0},
+    {datatype_t::hue,2999}
 };
 //====================================================================================
 auto minIDXForType(datatype_t type) ->std::uint32_t {
@@ -231,4 +232,42 @@ auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &pat
             
     }
 
+}
+//====================================================================================
+auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t &info)->void{
+    auto buffer = std::vector<char>(4098,0);
+    auto count = 0 ;
+    while(input.good() && !input.eof()){
+        count++;
+        input.getline(buffer.data(),4097);
+        if (input.gcount()>0){
+            buffer.at(input.gcount())=0;
+            std::string line = buffer.data();
+            line = strutil::trim(strutil::strip(line,"//"));
+            if (!line.empty()){
+                if ((line.at(0) >= 48) && (line.at(0)<= 57)){
+                    // This is a good line, maybe
+                    auto [sid,rest] = strutil::split(line,",");
+                    try {
+                        auto id = static_cast<std::uint32_t>(std::stoul(sid,nullptr,0));
+                        if (arg.id(id)){
+                            if (id <0x4000){
+                                auto tile = ultima::landtile_t(rest, ",");
+                                info.land(id) = tile;
+                            }
+                            else{
+                                auto tile = ultima::itemtile_t(rest, ",");
+                                info.item(id-0x4000) = tile;
+                            }
+                        }
+                    }
+                    catch(...){
+                        // We do nothing, if we can convert it, we just move one.
+                        std::cerr <<"Error processing , skipping line: "<<count<<std::endl;
+                    }
+                    
+                }
+            }
+        }
+    }
 }

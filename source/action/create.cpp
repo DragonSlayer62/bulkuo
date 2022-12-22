@@ -15,12 +15,11 @@
 #include "../uodata/idx.hpp"
 #include "../uodata/uowave.hpp"
 #include "../uodata/multicollection.hpp"
-
+#include "../uodata/hueaccess.hpp"
+#include "../uodata/tileinfo.hpp"
 
 #include "../artwork/bitmap.hpp"
-#include "../artwork/gump.hpp"
-#include "../artwork/art.hpp"
-#include "../artwork/texture.hpp"
+#include "../artwork/hue.hpp"
 
 using namespace std::string_literals;
 
@@ -31,6 +30,8 @@ using namespace std::string_literals;
 auto createUOP(const argument_t &arg,datatype_t type) ->void;
 auto createIDXMul(const argument_t &arg,datatype_t type) ->void;
 auto createUOPIDXMul(const argument_t &arg,datatype_t type) ->void;
+auto createHue(const argument_t &arg,datatype_t type) ->void;
+auto createInfo(const argument_t &arg,datatype_t type) ->void ;
 
 
 //=================================================================================
@@ -44,10 +45,10 @@ auto noCreate(const argument_t &args,datatype_t type) ->void {
 
 //=================================================================================
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> create_mapping{
-    {datatype_t::art,createUOPIDXMul},{datatype_t::info,noCreate},
+    {datatype_t::art,createUOPIDXMul},{datatype_t::info,createInfo},
     {datatype_t::texture,createIDXMul},{datatype_t::sound,createUOPIDXMul},
     {datatype_t::gump,createUOPIDXMul},{datatype_t::animation,noCreate},
-    {datatype_t::hue,noCreate},{datatype_t::multi,createUOPIDXMul}
+    {datatype_t::hue,createHue},{datatype_t::multi,createUOPIDXMul}
 };
 
 //================================================================================
@@ -213,4 +214,53 @@ auto createUOPIDXMul(const argument_t &arg,datatype_t type) ->void {
     else{
         throw (std::runtime_error("Invalid number of paths."));
     }
+}
+//================================================================================
+auto createHue(const argument_t &arg,datatype_t type) ->void {
+    if (arg.paths.size()!= 2){
+        throw std::runtime_error("Invalid number of paths, format: directory outhuemul");
+    }
+    auto directory = arg.paths.at(0);
+    auto huepath = arg.paths.at(1);
+    arg.writeOK(huepath);
+    auto potential = contentsFor(directory, primaryForType(type));
+    auto validid = validInContents(arg, potential);
+    auto count = std::max(*validid.rbegin(),minIDXForType(type)) +1;
+    auto output = std::ofstream(huepath.string(),std::ios::binary);
+    if (!output.is_open()){
+        throw std::runtime_error("Unable to create: "s +huepath.string());
+    }
+    ultima::createHue(output,count);
+    for (const auto &id : validid){
+        auto path = potential.at(id) ;
+        auto input = std::ifstream(path.string(),std::ios::binary);
+        if (!input.is_open()){
+            throw std::runtime_error("Unable to open: "s+path.string());
+        }
+        auto namepath = path ;
+        namepath.replace_extension(".txt") ;
+        auto name = nameInFile(namepath);
+        auto bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
+        auto buffer = dataFromHue(bitmap, name);
+        auto offset = ultima::hueOffset(id);
+        output.seekp(offset,std::ios::beg) ;
+        output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
+    }
+    
+}
+//================================================================================
+auto createInfo(const argument_t &arg,datatype_t type) ->void {
+    if (arg.paths.size()!= 2){
+        throw std::runtime_error("Invalid number of paths, format: csvfile outtilemul");
+    }
+    auto inputpath = arg.paths.at(0);
+    auto outpath = arg.paths.at(1);
+    arg.writeOK(outpath);
+    auto input = std::ifstream(inputpath.string());
+    if (!input.is_open()){
+        throw std::runtime_error("Unable to open: "s+inputpath.string());
+    }
+    auto info = ultima::tileinfo_t() ;
+    updateInfo(arg, input,  info) ;
+    info.save(outpath);
 }

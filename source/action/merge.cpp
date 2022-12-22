@@ -15,6 +15,11 @@
 #include "../uodata/hash.hpp"
 #include "../uodata/uop.hpp"
 #include "../uodata/idx.hpp"
+#include "../uodata/hueaccess.hpp"
+#include "../uodata/tileinfo.hpp"
+
+#include "../artwork/bitmap.hpp"
+#include "../artwork/hue.hpp"
 
 using namespace std::string_literals;
 
@@ -23,6 +28,8 @@ using namespace std::string_literals;
 auto uopMerge(const argument_t &args,datatype_t type) ->void ;
 auto idxmulMerge(const argument_t &args,datatype_t type) ->void ;
 auto uopidxmulMerge(const argument_t &args,datatype_t type) ->void ;
+auto hueMerge(const argument_t &args,datatype_t type) ->void ;
+auto infoMerge(const argument_t &args,datatype_t type) ->void ;
 //=================================================================================
 auto noMerge(const argument_t &args,datatype_t type) ->void {
     auto name = nameForDatatype(type);
@@ -34,10 +41,10 @@ auto noMerge(const argument_t &args,datatype_t type) ->void {
 
 //=================================================================================
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> merge_mapping{
-    {datatype_t::art,uopidxmulMerge},{datatype_t::info,noMerge},
+    {datatype_t::art,uopidxmulMerge},{datatype_t::info,infoMerge},
     {datatype_t::texture,idxmulMerge},{datatype_t::sound,uopidxmulMerge},
     {datatype_t::gump,uopidxmulMerge},{datatype_t::animation,noMerge},
-    {datatype_t::hue,noMerge},{datatype_t::multi,uopidxmulMerge}
+    {datatype_t::hue,hueMerge},{datatype_t::multi,uopidxmulMerge}
 };
 //===============================================================================
 auto uopMerge(const argument_t &args,datatype_t type) ->void {
@@ -153,7 +160,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
     if (validids.empty()){
         throw std::runtime_error("No valid ids to merge.");
     }
- 
+    
     auto idx = std::ifstream(idxpath.string(),std::ios::binary);
     if (!idx.is_open()){
         throw std::runtime_error("Unable to open: "s + idxpath.string());
@@ -164,7 +171,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
     if (!mul.is_open()){
         throw std::runtime_error("Unable to open: "s + mulpath.string());
     }
-
+    
     auto outidx = std::ofstream(outidxpath.string(),std::ios::binary);
     if (!outidx.is_open()){
         throw std::runtime_error("Unable to create: "s + outidxpath.string());
@@ -241,3 +248,74 @@ auto uopidxmulMerge(const argument_t &args,datatype_t type) ->void {
         throw std::runtime_error("Invalid number of paths for operation.");
     }
 }
+//===============================================================================
+auto hueMerge(const argument_t &args,datatype_t type) ->void {
+    if (args.paths.size()!=2){
+        throw std::runtime_error("Invalid number of paths, format: directory huemulfile");
+    }
+    auto directory = args.paths.at(0) ;
+    auto huepath = args.paths.at(1);
+    auto outpath = huepath;
+    outpath.replace_extension(outpath.extension().string()+".bulkuo"s) ;
+    args.writeOK(outpath);
+    auto input = std::ifstream(huepath.string(),std::ios::binary);
+    if (!input.is_open()){
+        throw std::runtime_error("Unable to open: "s+huepath.string());
+    }
+    auto intotal = ultima::hueEntries(input);
+    auto data = contentsFor(directory, primaryForType(type));
+    auto validids = validInContents(args, data);
+    auto count = static_cast<std::uint32_t>(*validids.rbegin())+1 ;
+    count = std::max(count,intotal);
+    auto output = std::ofstream(outpath.string(),std::ios::binary);
+    if (!output.is_open()){
+        throw std::runtime_error("Unable to create: "s+outpath.string());
+    }
+    try{
+        ultima::createHue(output,count);
+        auto buffer = std::vector<std::uint8_t>() ;
+        for (std::uint32_t id =0 ; id< count;id++){
+            if (validids.find(id)!= validids.end()){
+                // Ok a valid one
+                auto path = data.at(id) ;
+                auto img = std::ifstream(path.string(),std::ios::binary);
+                if (!img.is_open()){
+                    throw std::runtime_error("Unable to open: "s+path.string());
+                }
+                
+                auto bitmap = bitmap_t<std::uint16_t>::fromBMP(img);
+                img.close();
+                path = path.replace_extension(".txt") ;
+                auto name = nameInFile(path);
+                buffer = dataFromHue(bitmap, name);
+            }
+            else {
+                buffer = ultima::hueData(input, id);
+            }
+            output.seekp(ultima::hueOffset(id),std::ios::beg);
+            output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
+        }
+    }
+    catch(...){
+        output.close();
+        std::filesystem::remove(outpath);
+        throw;
+        
+    }
+};
+//===============================================================================
+auto infoMerge(const argument_t &args,datatype_t type) ->void {
+    if (args.paths.size()!=2){
+        throw std::runtime_error("Invalid number of paths, format: csvfile tiledatafile");
+    }
+    auto csvpath = args.paths.at(0) ;
+    auto infopath = args.paths.at(1);
+    auto outpath = infopath;
+    outpath.replace_extension(outpath.extension().string()+".bulkuo"s) ;
+    args.writeOK(outpath);
+    auto info = ultima::tileinfo_t(infopath);
+    auto input = std::ifstream(csvpath.string());
+    updateInfo(args, input,  info) ;
+    info.save(outpath);
+    
+};
