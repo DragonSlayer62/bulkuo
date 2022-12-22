@@ -3,7 +3,8 @@
 #include "flag.hpp"
 
 #include <iostream>
-
+#include <algorithm>
+#include "strutil.hpp"
 using namespace std::string_literals;
 
 //=================================================================================
@@ -12,7 +13,6 @@ namespace ultima {
     //=================================================================================
     // Define flag_t
     //=================================================================================
-    
     //=================================================================================
     // Define flagnames
     //=================================================================================
@@ -34,6 +34,23 @@ namespace ultima {
         {"bit57"s,0x100000000000000},{"bit58"s,0x200000000000000},{"bit59"s,0x400000000000000},{"bit60"s,0x800000000000000},
         {"bit61"s,0x1000000000000000},{"bit62"s,0x2000000000000000},{"bit63"s,0x4000000000000000},{"bit64"s,0x8000000000000000}
     };
+    //================================================================================
+    auto flag_t::flag_header(const std::string &sep) ->std::string {
+        auto label = std::string();
+        for (auto j=0 ; j<64;j++){
+            auto mask = std::uint64_t(1)<<j ;
+            auto iter=std::find_if(flagname_masks.begin(),flagname_masks.end(),[mask](const std::pair<std::string,std::uint16_t> &value){
+                return std::get<1>(value) == mask ;
+            });
+            if (iter != flagname_masks.end()){
+                if (!label.empty()){
+                    label += sep ;
+                }
+                label += iter->first;
+            }
+        }
+        return label ;
+    }
     
     //=================================================================================
     // Define flag_t::maskForName
@@ -68,25 +85,18 @@ namespace ultima {
     //=================================================================================
     //=================================================================================
     flag_t::flag_t(const std::string &flagvalue, const std::string &sep):value(0){
-        auto working = flagvalue;
-        auto current = std::string();
-        while (!working.empty()){
-            auto pos = working.find(sep) ;
-            
-            if (pos!= std::string::npos){
-                current = working.substr(0,pos) ;
-                if (pos+1 < working.size()){
-                    working = working.substr(pos+1) ;
-                }
-                else {
-                    working="";
-                }
+        auto values = strutil::parse(flagvalue,sep);
+        if (values.size() != 64){
+            throw std::runtime_error("Invalid bits for flag initialization");
+        }
+        for (auto j=0 ; j<64;j++){
+            auto mask = std::uint64_t(1)<<j;
+            if ((values.at(j)=="0") || values.at(j).empty()){
+                value &= (~mask) ;
             }
             else {
-                current = working ;
-                working ="";
+                value |= mask;
             }
-            value |= flagname_masks.at(current) ;
         }
     }
     
@@ -128,19 +138,21 @@ namespace ultima {
     //=================================================================================
     //=================================================================================
     auto flag_t::description(const std::string &sep) const ->std::string {
-        auto rvalue = std::string();
-        auto one = std::uint64_t(1) ;
-        for (auto j=0; j<64;j++) {
-            auto mask = (one<<j) ;
-            if ( (mask&value)!= 0) {
-                if (!rvalue.empty()){
-                    rvalue+=sep ;
-                }
-                rvalue += flagNameForBit(j+1) ;
-            }
-        }
         
-        return rvalue ;
+        auto label = std::string();
+        for (auto j=0 ; j<64;j++){
+            auto mask = std::uint64_t(1)<<j ;
+            if (!label.empty()){
+                label += sep;
+            }
+            if (value & mask){
+                label += "1";
+            }
+            else{
+                label += " ";
+            }
+       }
+        return label ;
     }
     //*********************************************************************************
 }

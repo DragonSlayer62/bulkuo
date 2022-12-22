@@ -155,5 +155,14 @@ auto argument_t::writeOK(const std::filesystem::path &path,bool exception) const
     if (!rvalue && exception){
         throw std::runtime_error("Creation would overwrite file without --overwrite: "s+path.string());
     }
+    if (rvalue){
+        // Lets ensure the directory is there
+        auto root = path.parent_path() ;
+        if (!root.empty()){
+            if (!std::filesystem::exists(root)) {
+                std::filesystem::create_directories(root) ;
+            }
+        }
+    }
     return rvalue ;
 }

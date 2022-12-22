@@ -63,26 +63,26 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--label=label/art.txt"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--category=category/art.txt"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--hex"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--art"
+            argument = "--info"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "uo/artLegacyMUL.uop"
+            argument = "uo/tiledata.mul"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "artwork"
+            argument = "info.csv"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

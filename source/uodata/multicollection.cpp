@@ -21,7 +21,52 @@ namespace ultima {
     multi_sub_item_t::multi_sub_item_t():tileid(0),xoffset(0),yoffset(0),zoffset(0),flag(0){
         
     }
-    
+    //=================================================================================
+    auto multi_sub_item_t::load(const std::uint8_t *data, bool isuop)->size_t {
+        auto offset = size_t(0) ;
+        auto small_flag = std::uint16_t(0);
+        auto count = std::uint32_t(0);
+        auto cli = std::uint32_t(0);
+        cliloc.clear();
+        std::copy(data+offset,data+offset+2,reinterpret_cast<std::uint8_t*>(&tileid));
+        offset+=2 ;
+        std::copy(data+offset,data+offset+2,reinterpret_cast<std::uint8_t*>(&xoffset));
+        offset+=2 ;
+        std::copy(data+offset,data+offset+2,reinterpret_cast<std::uint8_t*>(&yoffset));
+        offset+=2 ;
+        std::copy(data+offset,data+offset+2,reinterpret_cast<std::uint8_t*>(&zoffset));
+        offset+=2 ;
+         if (isuop) {
+            std::copy(data+offset,data+offset+2,reinterpret_cast<std::uint8_t*>(&small_flag));
+            offset+=2 ;
+            switch (small_flag) {
+                default:
+                case 0:
+                    flag =1 ;
+                    break;
+                case 256:
+                    flag =0x0000000100000001;
+                    break;
+                case 257:
+                    flag = 0x0000000100000000;
+                    break;
+                case 1:
+                    flag = 0 ;
+            }
+            std::copy(data+offset,data+offset+4,reinterpret_cast<std::uint8_t*>(&count));
+            offset+=4 ;
+            for (std::uint32_t j=0; j<count ; j++){
+                std::copy(data+offset,data+offset+4,reinterpret_cast<std::uint8_t*>(&cli));
+                offset+=4 ;
+                cliloc.push_back(cli);
+            }
+        }
+        else {
+            std::copy(data+offset,data+offset+8,reinterpret_cast<std::uint8_t*>(&flag));
+            offset+=8 ;
+        }
+        return offset ;
+    }
     //=================================================================================
     multi_sub_item_t::multi_sub_item_t(const std::string &line):multi_sub_item_t(){
         auto values = strutil::parse(line,",");
@@ -57,22 +102,23 @@ namespace ultima {
     //=================================================================================
     auto multi_sub_item_t::description(bool use_hex) const ->std::string {
         std::stringstream output ;
-        std::stringstream cli ;
-        if (use_hex) {
+         if (use_hex) {
             output <<std::hex<<std::showbase<<std::setw(4)<<tileid<<std::dec<<std::noshowbase<<",";
         }
         else {
             output <<tileid<<",";
         }
         output << xoffset<<","<<yoffset<<","<<zoffset<<"," ;
-        output <<std::hex<<std::showbase<<std::setw(16)<<flag<<std::dec<<std::noshowbase<<",";
+        output <<std::hex<<std::showbase<<flag<<std::dec<<std::noshowbase<<",";
+        auto temp = std::string();
         for (const auto &value:cliloc) {
-            if (!cli.str().empty()){
-                cli<<":";
+            if (!temp.empty()){
+                temp+=":";
             }
-            cli << value ;
+            temp+= std::to_string(value);
         }
-        output <<cli.str();
+        output << temp;
+        
         return output.str() ;
     }
     //=================================================================================
@@ -271,6 +317,13 @@ namespace ultima {
     //=================================================================================
     auto multi_entry_t::data(bool isuop) const ->std::vector<std::uint8_t> {
         auto buffer = std::vector<std::uint8_t>() ;
+        if (isuop){
+            auto zero = std::vector<std::uint8_t>(0,4) ;
+            auto count = static_cast<std::uint32_t>(items.size());
+            buffer.insert(buffer.end(),zero.begin(),zero.end());
+            std::copy(reinterpret_cast<std::uint8_t*>(&count),reinterpret_cast<std::uint8_t*>(&count)+4,zero.begin());
+            buffer.insert(buffer.end(),zero.begin(),zero.end());
+        }
         for (const auto &entry:items){
             auto data = entry.data(isuop) ;
             buffer.insert(buffer.end(),data.begin(),data.end());
@@ -279,14 +332,32 @@ namespace ultima {
     }
     
     //=================================================================================
+    //=================================================================================
+    // Format:
+    //      std::uint16_t tileid
+    //      std::int16_t offsetx
+    //      std::int16_t offsety
+    //      std::int16_t offsetz
+    //      std::uint16_t flag      << different from mul
+    //                              (value of 0, set bit 1 in old flag)
+    //                              (value of 1, no bits set)
+    //                              (value of 257, set flag = 0x0000000100000000)(alphablend)
+    //      std::uint32_t num_cliloc
+    //      std::uint32_t cliloc[num_cliloc]
+    //
     auto multi_entry_t::load(const std::vector<std::uint8_t> &data, bool isuop) ->void {
-        if (data.size() < multi_sub_item_t::min_size) {
+        if (data.size() < multi_sub_item_t::mul_record_size) {
             throw std::runtime_error("Invalid multi entry data size.");
         }
         auto offset = size_t(0) ;
-        auto count = std::uint32_t(0);
-        auto small_flag = std::uint16_t(0);
-        auto cli = std::uint32_t(0);
+        auto number = data.size()/multi_sub_item_t::mul_record_size;
+        
+        if (isuop) {
+            offset +=4 ;
+            std::copy(data.data()+offset,data.data()+offset+4,reinterpret_cast<std::uint8_t*>(&number));
+            offset += 4 ;
+
+        }
         items.clear();
         minz = std::numeric_limits<std::int16_t>::max();
         maxz = std::numeric_limits<std::int16_t>::min();
@@ -295,51 +366,15 @@ namespace ultima {
         minx = std::numeric_limits<std::int16_t>::max();
         maxx = std::numeric_limits<std::int16_t>::min();
 
-        while (offset < data.size()){
+        for (size_t j=0 ; j<number;j++){
             auto entry = multi_sub_item_t();
-            std::copy(data.begin()+offset,data.begin()+offset+2,reinterpret_cast<std::uint8_t*>(&entry.tileid));
-            offset+=2 ;
-            std::copy(data.begin()+offset,data.begin()+offset+2,reinterpret_cast<std::uint8_t*>(&entry.xoffset));
-            offset+=2 ;
+            offset += entry.load(data.data()+offset, isuop);
             this->minx = std::min(minx,entry.xoffset);
             this->maxx = std::max(maxx,entry.xoffset);
-            std::copy(data.begin()+offset,data.begin()+offset+2,reinterpret_cast<std::uint8_t*>(&entry.yoffset));
-            offset+=2 ;
             this->miny = std::min(miny,entry.yoffset);
             this->maxy = std::max(maxy,entry.yoffset);
-            std::copy(data.begin()+offset,data.begin()+offset+2,reinterpret_cast<std::uint8_t*>(&entry.zoffset));
-            offset+=2 ;
             this->minz = std::min(minz,entry.zoffset);
             this->maxz = std::max(maxz,entry.zoffset);
-            if (isuop) {
-                std::copy(data.begin()+offset,data.begin()+offset+2,reinterpret_cast<std::uint8_t*>(&small_flag));
-                offset+=2 ;
-                switch (small_flag) {
-                    default:
-                    case 0:
-                        entry.flag =1 ;
-                        break;
-                    case 256:
-                        entry.flag =0x0000000100000001;
-                        break;
-                    case 257:
-                        entry.flag = 0x0000000100000000;
-                        break;
-                    case 1:
-                        entry.flag = 0 ;
-                }
-                std::copy(data.begin()+offset,data.begin()+offset+4,reinterpret_cast<std::uint8_t*>(&count));
-                offset+=4 ;
-                for (std::uint32_t j=0; j<count ; j++){
-                    std::copy(data.begin()+offset,data.begin()+offset+4,reinterpret_cast<std::uint8_t*>(&cli));
-                    offset+=4 ;
-                    entry.cliloc.push_back(cli);
-                }
-            }
-            else {
-                std::copy(data.begin()+offset,data.begin()+offset+8,reinterpret_cast<std::uint8_t*>(&entry.flag));
-                offset+=4 ;
-            }
             items.push_back(entry) ;
         }
     }
@@ -349,6 +384,10 @@ namespace ultima {
         if (!input.is_open()){
             throw std::runtime_error("Unable to open: "s + path.string());
         }
+        load(input);
+     }
+    //=================================================================================
+    auto multi_entry_t::load(std::ifstream &input)->void {
         auto buffer = std::vector<char>(2048,0);
         while (input.good() && !input.eof()){
             input.getline(buffer.data(),2047);
@@ -363,8 +402,9 @@ namespace ultima {
                 }
             }
         }
+
     }
-    
+
     //=================================================================================
     auto multi_entry_t::description(const std::filesystem::path &path,bool use_hex) ->void{
         auto output = std::ofstream(path.string());

@@ -6,12 +6,19 @@
 #include <stdexcept>
 #include <algorithm>
 #include <sstream>
-
+#include "strutil.hpp"
 using namespace std::string_literals;
 
 //=================================================================================
 namespace ultima {
 
+    auto tilebase_t::header() ->std::string {
+        auto label = std::string();
+        label = "name,texture,weight,quality,misc_data,unknown2,quantity,animation,uknown3, hue, stacking_offset,height," ;
+        label += flag_t::flag_header(",");
+        return label ;
+    }
+    
     //=================================================================================
     // landtile_t constructor
     //=================================================================================
@@ -27,6 +34,37 @@ namespace ultima {
         auto buffer = std::vector<char>(21,0) ;
         input.read(buffer.data(),20);
         name = buffer.data() ;
+    }
+    //=================================================================================
+    landtile_t::landtile_t(const std::string &line,const std::string &sep):landtile_t(){
+        auto values = strutil::parse(line,sep) ;
+        if (values.size() != 76){
+            throw std::runtime_error("Land tile initialization with invalid entries.");
+        }
+        name = values.at(0) ;
+        textureid = static_cast<std::uint16_t>(std::stoul(values.at(1),nullptr,0)) ;
+        for (auto j=0;j<64;j++){
+            auto mask = std::uint64_t(1) << j;
+            if ((values.at(j+12).empty())|| (values.at(j+12)=="0")){
+                flag.value &=(~mask) ;
+            }
+            else {
+                flag.value |= mask ;
+            }
+        }
+    }
+    //=================================================================================
+    auto landtile_t::description(bool use_hex) ->std::string{
+        auto output = std::stringstream();
+        output <<name <<",";
+        if (use_hex){
+            output <<std::hex<<std::showbase<<textureid<<std::dec<<std::noshowbase<<",,,,,,,,,,," ;
+        }
+        else{
+            output <<textureid<<",,,,,,,,,,," ;
+        }
+        output << flag.description(",");
+        return output.str();
     }
     //=================================================================================
     auto landtile_t::save(std::ofstream &output,bool isHS) ->void{
@@ -71,6 +109,55 @@ namespace ultima {
         auto buffer = std::vector<char>(21,0) ;
         input.read(buffer.data(),20);
         name = buffer.data() ;
+    }
+    //=================================================================================
+    itemtile_t::itemtile_t(const std::string &line,const std::string &sep):itemtile_t(){
+        auto values = strutil::parse(line,sep) ;
+        if (values.size() != 76){
+            throw std::runtime_error("Land tile initialization with invalid entries.");
+        }
+        name = values.at(0) ;
+        weight = static_cast<std::uint8_t>(std::stoul(values.at(2),nullptr,0));
+        quality = static_cast<std::uint8_t>(std::stoul(values.at(3),nullptr,0));
+        misc_data = static_cast<std::uint16_t>(std::stoul(values.at(4),nullptr,0));
+        unknown2 = static_cast<std::uint8_t>(std::stoul(values.at(5),nullptr,0));
+        quantity = static_cast<std::uint8_t>(std::stoul(values.at(6),nullptr,0));
+        animid = static_cast<std::uint16_t>(std::stoul(values.at(7),nullptr,0));
+        unknown3 = static_cast<std::uint8_t>(std::stoul(values.at(8),nullptr,0));
+        hue = static_cast<std::uint8_t>(std::stoul(values.at(9),nullptr,0));
+        stacking_offset = static_cast<std::uint16_t>(std::stoul(values.at(10),nullptr,0));
+        height = static_cast<std::uint8_t>(std::stoul(values.at(11),nullptr,0));
+
+        for (auto j=0;j<64;j++){
+            auto mask = std::uint64_t(1) << j;
+            if ((values.at(j+12).empty())|| (values.at(j+12)=="0")){
+                flag.value &=(~mask) ;
+            }
+            else {
+                flag.value |= mask ;
+            }
+        }
+    }
+    //=================================================================================
+    auto itemtile_t::description(bool use_hex) ->std::string{
+        auto output = std::stringstream();
+        output <<name <<",,";
+        output <<static_cast<std::uint16_t>(weight)<<"," ;
+        output <<static_cast<std::uint16_t>(quality)<<"," ;
+        output <<misc_data<<"," ;
+        output <<static_cast<std::uint16_t>(unknown2)<<"," ;
+        if (use_hex){
+            output <<std::hex<<std::showbase<<animid<<std::dec<<std::noshowbase<<"," ;
+        }
+        else{
+            output <<animid<<"," ;
+        }
+        output <<static_cast<std::uint16_t>(unknown3)<<"," ;
+        output <<static_cast<std::uint16_t>(hue)<<"," ;
+        output <<stacking_offset<<"," ;
+        output <<static_cast<std::uint16_t>(height)<<"," ;
+        output << flag.description(",");
+        return output.str();
     }
     //=================================================================================
     auto itemtile_t::save(std::ofstream &output,bool isHS) ->void{

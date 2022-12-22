@@ -161,17 +161,32 @@ namespace ultima{
     //=================================================================================
     
     //=================================================================================
+    uowave_t::uowave_t(std::ifstream &input):uowave_t(){
+        load(input);
+    }
+    //=================================================================================
+    uowave_t::uowave_t(std::filesystem::path &path):uowave_t(){
+        if (!load(path)){
+            throw std::runtime_error("Unable to open: "s + path.string());
+        }
+    }
+    //=================================================================================
     auto uowave_t::load(const std::filesystem::path &wavpath) ->bool {
         auto input = std::ifstream(wavpath.string(),std::ios::binary);
         if (!input.is_open()){
             return false ;
         }
-        header.load(input);
-        format.load(input);
-        data.load(input);
+        load(input);
         return true ;
     }
     //=================================================================================
+    auto uowave_t::load(std::ifstream &input) ->void {
+        header.load(input);
+        format.load(input);
+        data.load(input);
+        
+    }
+   //=================================================================================
     auto uowave_t::save(const std::filesystem::path &wavpath)  ->bool {
         header.filesize = data.chunksize() + format.chunksize();
         auto output = std::ofstream(wavpath.string(),std::ios::binary);

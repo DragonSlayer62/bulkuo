@@ -15,6 +15,8 @@
 #include "../uodata/hash.hpp"
 #include "../uodata/uowave.hpp"
 #include "../uodata/multicollection.hpp"
+#include "../uodata/hueaccess.hpp"
+#include "../uodata/tileinfo.hpp"
 
 #include "uophash.hpp"
 #include "actutility.hpp"
@@ -42,7 +44,7 @@ auto extractInfo(const argument_t &args, datatype_t type) ->void;
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> extract_mapping{
     {datatype_t::art,extractData},{datatype_t::info,extractInfo},
     {datatype_t::texture,extractIdxMul},{datatype_t::sound,extractData},
-    {datatype_t::gump,extractData},{datatype_t::animation,extractIdxMul},
+    {datatype_t::gump,extractData},{datatype_t::animation,noExtraction},
     {datatype_t::hue,extractHue},{datatype_t::multi,extractData}
 };
 
@@ -76,13 +78,17 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
     if (!input.is_open()){
         throw std::runtime_error("Unable to open: "s + uoppath.string());
     }
+    if (!ultima::validUOP(input)){
+        throw std::runtime_error("Invalid uop format: "s + uoppath.string());
+
+    }
     auto offsets = ultima::gatherEntryOffsets(input);
     auto [hashformat,maxid] = getUOPInfoFor(type);
     auto hashset = ultima::hashset_t(hashformat, 0, maxid);
     auto mapping = ultima::createIDTableMapping(input, hashset, offsets);
     auto fileflag = std::ios::binary ;
     if (type == datatype_t::multi){
-        fileflag=std::ios::in;
+        fileflag=std::ios::out;
     }
     for (auto const &[id,entry]:mapping){
         if (args.id(id)){
@@ -121,6 +127,8 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
                     auto name = wav.loadUO(buffer.data(), buffer.size()) ;
                     auto soutput = std::ofstream(secondpath.string());
                     if (!soutput.is_open()){
+                        output.close();
+                        std::filesystem::remove(path) ;
                         throw std::runtime_error("Unable to create: "s + secondpath.string());
                     }
                     soutput<<name<<std::endl;
@@ -131,19 +139,34 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
                 case datatype_t::multi: {
                     auto entry = ultima::multi_entry_t(buffer,true);
                     entry.description(output, args.use_hex);
+                    output.close();
+                    break;
                 }
                 default: {
                     // we shouldn't be here?
                     output.close();
                     std::filesystem::remove(path);
                 }
-                    
-                    
             }
-            
-            
-            
         }
+    }
+    // We are almost done.  We need to check for multi, to get housing bin!
+    if (type == datatype_t::multi){
+        auto hashset = ultima::hashset_t();
+        hashset.insert(ultima::hashLittle2("build/multicollection/housing.bin"), 0) ;
+        auto mapping = ultima::createIDTableMapping(input, hashset, offsets);
+        for (const auto &[id,entry]:mapping){
+            auto buffer = ultima::readUOPData(entry, input);
+            auto path = directory / std::filesystem::path("housing.bin");
+            args.writeOK(path);
+            auto output = std::ofstream(path.string(),std::ios::binary);
+            if (!output.is_open()){
+                throw std::runtime_error("Unable to create: "s + path.string());
+            }
+            output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
+            output.close();
+        }
+
     }
 }
 //=================================================================================
@@ -154,14 +177,157 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
     auto idxpath = args.paths.at(0);
     auto mulpath = args.paths.at(1);
     auto directory = args.paths.at(2);
-    
-    
+    auto idx = std::ifstream(idxpath.string(),std::ios::binary);
+    if (!idx.is_open()){
+        throw std::runtime_error("Unable to open: "s + idxpath.string());
+    }
+    auto mul = std::ifstream(mulpath.string(),std::ios::binary);
+    if (!mul.is_open()){
+        throw std::runtime_error("Unable to open: "s + idxpath.string());
+    }
+    auto fileflag = std::ios::binary ;
+    if (type == datatype_t::multi){
+        fileflag=std::ios::out;
+    }
+    auto entries = ultima::gatherIDXEntries(idx);
+    for (const auto &[id,entry]:entries){
+        auto bitmap = bitmap_t<std::uint16_t>();
+       if (args.id(id)){
+            auto path = args.filepath(id, directory, primaryForType(type));
+            args.writeOK(path);
+            auto output = std::ofstream(path.string(),fileflag);
+            if (!output.is_open()){
+                throw std::runtime_error("Unable to create: "s + path.string());
+            }
+            auto buffer = ultima::readMulData(mul, entry);
+            switch(type){
+                case datatype_t::gump: {
+                    auto temp = std::vector<std::uint8_t>(8,0);
+                    std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra),reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,temp.begin()+4);
+                    std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,reinterpret_cast<const std::uint8_t*>(&entry.extra)+4,temp.begin());
+                    temp.insert(temp.end(),buffer.begin(),buffer.end());
+                    bitmap = bitmapForGump(temp);
+                    bitmap.saveToBMP(output,args.colorsize);
+                    break;
+                }
+                case datatype_t::art: {
+                    if (id <0x4000){
+                        bitmap = bitmapForTerrain(buffer);
+                    }
+                    else {
+                        bitmap = bitmapForItem(buffer);
+                    }
+                    bitmap.saveToBMP(output,args.colorsize);
+                    break;
+                }
+                case datatype_t::texture: {
+                    bitmap = bitmapForTexture(buffer);
+                    bitmap.saveToBMP(output,args.colorsize);
+                    break;
+                }
+                case datatype_t::sound: {
+                    auto secondary = secondaryForType(type);
+                    auto secondpath=args.filepath(id,directory,secondary);
+                    args.writeOK(secondpath);
+                    
+                    auto wav = ultima::uowave_t();
+                    auto name = wav.loadUO(buffer.data(), buffer.size()) ;
+                    auto soutput = std::ofstream(secondpath.string());
+                    if (!soutput.is_open()){
+                        output.close();
+                        std::filesystem::remove(path) ;
+                        throw std::runtime_error("Unable to create: "s + secondpath.string());
+                    }
+                    soutput<<name<<std::endl;
+                    soutput.close();
+                    wav.save(output);
+                    break;
+                }
+                case datatype_t::multi: {
+                    auto entry = ultima::multi_entry_t(buffer,false);
+                    entry.description(output, args.use_hex);
+                    output.close();
+
+                    break;
+                }
+                default:{
+                    output.close();
+                    std::filesystem::remove(path);
+                    break;
+                    
+                }
+         }
+        }
+    }
 }
 //=================================================================================
 auto extractHue(const argument_t &args, datatype_t type) ->void{
+    if (args.paths.size() != 2){
+        throw std::runtime_error("For hues, paths required are: uomulpath directory.");
+    }
+    auto inputpath = args.paths.at(0);
+    auto directory = args.paths.at(1);
+    
+    auto input = std::ifstream(inputpath.string(),std::ios::binary);
+    if (!input.is_open()){
+        throw std::runtime_error("Unable to open: "s + inputpath.string());
+    }
+    auto maxid = ultima::hueEntries(input) ;
+    for (std::uint32_t id=0 ; id <maxid;id++) {
+        if (args.id(id) ){
+            auto buffer = ultima::hueData(input, id);
+            if (!hueBlank(buffer)){
+                auto path = args.filepath(id, directory, ".bmp");
+                auto secondary = args.filepath(id, directory, ".txt");
+                args.writeOK(path);
+                args.writeOK(secondary);
+                
+                auto [bitmap,name] = hueFromData(buffer,std::get<0>(args.huesize),std::get<1>(args.huesize));
+                auto output = std::ofstream(path.string(),std::ios::binary);
+                if (!output.is_open()){
+                    throw std::runtime_error("Unable to create: "s + path.string());
+                }
+                auto sec_output = std::ofstream(secondary.string());
+                if (!sec_output.is_open()){
+                    throw std::runtime_error("Unable to create: "s + secondary.string());
+                }
+                bitmap.saveToBMP(output,args.colorsize);
+                sec_output<<name<<std::endl;
+                sec_output.close();
+            }
+        }
+    }
     
 }
 //=================================================================================
 auto extractInfo(const argument_t &args, datatype_t type) ->void{
-    
+    if (args.paths.size() != 2){
+        throw std::runtime_error("For info, paths required are: tiledatamulpath outputfile.");
+    }
+    auto inputpath = args.paths.at(0);
+    auto outputpath = args.paths.at(1);
+    auto info = ultima::tileinfo_t(inputpath) ;
+    args.writeOK(outputpath);
+    auto output= std::ofstream(outputpath.string());
+    if (!output.is_open()){
+        throw std::runtime_error("Unable to create: "s + outputpath.string());
+    }
+    output << "tileid,"<<ultima::tilebase_t::header()<<std::endl;
+    for (std::uint32_t id = 0 ; id < 0x10000;id++){
+        if (args.id(id)){
+            if (args.use_hex){
+                output <<std::hex<<std::showbase<<id<<std::dec<<std::noshowbase<<",";
+            }
+            else {
+                output <<id<<",";
+            }
+            if (id<0x4000){
+                
+                output <<info.land(id).description(args.use_hex)<<"\n";
+            }
+            else {
+                output <<info.item(id-0x4000).description(args.use_hex)<<"\n";
+            }
+        }
+    }
 }

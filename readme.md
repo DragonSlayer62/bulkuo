@@ -146,14 +146,19 @@ There is a *Xcode* project.  Open **bulkuo.xcodeproj** in XCode
 ## Better categorization  
 - Copy the *label/tilename.txt* file to *category/types.txt*  
 - Open the *category/types.txt* and replace the "-" with a comma
+- Open the *category/types.txt* and replace the "=" with a comma
 - Import *category/types.txt* as a csv file to a spreadsheet
-- Sort by the name  
-    - This effectively groups all tiles of the same name together.
-- Use this to create a more robust *sort.txt* file  
-    - terrain/rock = 10,20,21, etc  (based on entries in the spreadsheet)  
-        - Ids are just examples, not actual rocks.  
-    - item/rock = 20000-20020  
-        - Ids are just examples, not actual rocks.  
+- Sort by the name(last column) 
+    - This effectively groups all tiles of the same name together.  
+- Create a directory column before the first column  
+- Add directory entires based on the name   
+    - For entries that you dont care about, delete them or bin them to a spillover directory  
+        - Optionally delete them, and keep the two lines one had in the sort.txt file from above in the end product (they must be the top two lines to not overwrite).  
+- Delete all columns execpt for the id, and directories  
+- Export to a csv file  
+- Open in an editor, and replace all "," with an "="  
+    - It should look like rows of *directory = id*  
+- Use this as a category file when exporting art or textures    
 
     
     

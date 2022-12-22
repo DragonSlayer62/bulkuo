@@ -23,6 +23,8 @@ namespace ultima {
         flag_t flag ;
         std::string name ;
         tilebase_t()=default ;
+        static auto header() ->std::string ;
+        virtual auto description(bool use_hex) ->std::string {return std::string();}
     };
     //=================================================================================
     // Define a land tile structure
@@ -31,7 +33,9 @@ namespace ultima {
         std::uint16_t textureid ;
         landtile_t():tilebase_t(),textureid(0){}
         landtile_t(std::ifstream &input,bool isHS = true) ;
+        landtile_t(const std::string &line,const std::string &sep);
         auto save(std::ofstream &output,bool isHS)->void;
+        auto description(bool use_hex) ->std::string final;
     };
     
     //=================================================================================
@@ -48,9 +52,10 @@ namespace ultima {
         std::uint8_t hue ;
         std::uint16_t stacking_offset ;
         std::uint8_t height ;
-        
+        auto description(bool use_hex) ->std::string;
         itemtile_t():tilebase_t(),weight(0),quality(0),misc_data(0),unknown2(0),quantity(0),animid(0),unknown3(0),hue(0),stacking_offset(0),height(0){}
         itemtile_t(std::ifstream &input,bool isHS = true) ;
+        itemtile_t(const std::string &line,const std::string &sep);
         auto save(std::ofstream &output,bool isHS) ->void;
     };
 

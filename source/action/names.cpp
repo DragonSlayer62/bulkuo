@@ -66,9 +66,9 @@ auto santizeName(const std::string& name) -> std::string {
         if (temp.find_first_not_of("-") == std::string::npos) {
             temp = "";
         }
-        return temp;
+       
     }
-
+    return temp;
 }
 
 //=================================================================================

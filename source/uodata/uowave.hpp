@@ -52,6 +52,9 @@ namespace ultima{
         
     public:
         uowave_t() =default;
+        uowave_t(std::ifstream &input);
+        uowave_t(std::filesystem::path &path);
+        auto load(std::ifstream &input) ->void ;
         auto load(const std::filesystem::path &wavpath) ->bool ;
         auto save(const std::filesystem::path &wavpath)  ->bool ;
         auto save(std::ofstream &output)->void ;
