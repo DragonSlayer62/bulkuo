@@ -18,7 +18,7 @@ int main(int argc, const char * argv[]) {
     auto exitcode = EXIT_SUCCESS ;
     try {
         auto arg = argument_t(argc, argv);
-        if (arg.help){
+        if (arg.help || arg.type == datatype_t::unknown || arg.action == action_t::unknown){
             printHelp() ;
         }
         else if (arg.version){
@@ -89,7 +89,7 @@ auto printHelp() ->void {
     std::cout <<"               directory_path out_uop_path \n";
     std::cout <<"               directory out_huemul_path \n";
     std::cout <<"               info_csv_file out_mul_path \n";
-    std::cout <<"        merge (creates \"bulkuo\" versions of the uo format\n";
+    std::cout <<"        merge (creates \".bulkuo\" versions of the uo format)\n";
     std::cout <<"               directory_path in_idx_path in_mul_path\n";
     std::cout <<"               directory_path in_uop_path \n";
     std::cout <<"               directory in_huemul_path \n";

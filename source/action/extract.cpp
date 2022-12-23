@@ -177,13 +177,14 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
     auto idxpath = args.paths.at(0);
     auto mulpath = args.paths.at(1);
     auto directory = args.paths.at(2);
+    auto amount_processed = std::uint32_t(0);
     auto idx = std::ifstream(idxpath.string(),std::ios::binary);
     if (!idx.is_open()){
         throw std::runtime_error("Unable to open: "s + idxpath.string());
     }
     auto mul = std::ifstream(mulpath.string(),std::ios::binary);
     if (!mul.is_open()){
-        throw std::runtime_error("Unable to open: "s + idxpath.string());
+        throw std::runtime_error("Unable to open: "s +mulpath.string());
     }
     auto fileflag = std::ios::binary ;
     if (type == datatype_t::multi){
@@ -200,6 +201,7 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
                 throw std::runtime_error("Unable to create: "s + path.string());
             }
             auto buffer = ultima::readMulData(mul, entry);
+            amount_processed++;
             switch(type){
                 case datatype_t::gump: {
                     auto temp = std::vector<std::uint8_t>(8,0);
@@ -256,7 +258,7 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
                     break;
                     
                 }
-         }
+            }
         }
     }
 }
