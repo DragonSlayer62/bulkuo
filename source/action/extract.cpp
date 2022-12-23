@@ -80,7 +80,7 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
     }
     if (!ultima::validUOP(input)){
         throw std::runtime_error("Invalid uop format: "s + uoppath.string());
-
+        
     }
     auto offsets = ultima::gatherEntryOffsets(input);
     auto [hashformat,maxid] = getUOPInfoFor(type);
@@ -166,7 +166,7 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
             output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
             output.close();
         }
-
+        
     }
 }
 //=================================================================================
@@ -190,74 +190,80 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
         fileflag=std::ios::out;
     }
     auto entries = ultima::gatherIDXEntries(idx);
-    for (const auto &[id,entry]:entries){
-        auto bitmap = bitmap_t<std::uint16_t>();
-       if (args.id(id)){
-            auto path = args.filepath(id, directory, primaryForType(type));
-            args.writeOK(path);
-            auto output = std::ofstream(path.string(),fileflag);
-            if (!output.is_open()){
-                throw std::runtime_error("Unable to create: "s + path.string());
-            }
-            auto buffer = ultima::readMulData(mul, entry);
-            switch(type){
-                case datatype_t::gump: {
-                    auto temp = std::vector<std::uint8_t>(8,0);
-                    std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra),reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,temp.begin()+4);
-                    std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,reinterpret_cast<const std::uint8_t*>(&entry.extra)+4,temp.begin());
-                    temp.insert(temp.end(),buffer.begin(),buffer.end());
-                    bitmap = bitmapForGump(temp);
-                    bitmap.saveToBMP(output,args.colorsize);
-                    break;
+    try{
+        for (const auto &[id,entry]:entries){
+            auto bitmap = bitmap_t<std::uint16_t>();
+            if (args.id(id)){
+                auto path = args.filepath(id, directory, primaryForType(type));
+                args.writeOK(path);
+                auto output = std::ofstream(path.string(),fileflag);
+                if (!output.is_open()){
+                    throw std::runtime_error("Unable to create: "s + path.string());
                 }
-                case datatype_t::art: {
-                    if (id <0x4000){
-                        bitmap = bitmapForTerrain(buffer);
+                auto buffer = ultima::readMulData(mul, entry);
+                switch(type){
+                    case datatype_t::gump: {
+                        auto temp = std::vector<std::uint8_t>(8,0);
+                        std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra),reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,temp.begin()+4);
+                        std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,reinterpret_cast<const std::uint8_t*>(&entry.extra)+4,temp.begin());
+                        temp.insert(temp.end(),buffer.begin(),buffer.end());
+                        bitmap = bitmapForGump(temp);
+                        bitmap.saveToBMP(output,args.colorsize);
+                        break;
                     }
-                    else {
-                        bitmap = bitmapForItem(buffer);
+                    case datatype_t::art: {
+                        if (id <0x4000){
+                            bitmap = bitmapForTerrain(buffer);
+                        }
+                        else {
+                            bitmap = bitmapForItem(buffer);
+                        }
+                        bitmap.saveToBMP(output,args.colorsize);
+                        break;
                     }
-                    bitmap.saveToBMP(output,args.colorsize);
-                    break;
-                }
-                case datatype_t::texture: {
-                    bitmap = bitmapForTexture(buffer);
-                    bitmap.saveToBMP(output,args.colorsize);
-                    break;
-                }
-                case datatype_t::sound: {
-                    auto secondary = secondaryForType(type);
-                    auto secondpath=args.filepath(id,directory,secondary);
-                    args.writeOK(secondpath);
-                    
-                    auto wav = ultima::uowave_t();
-                    auto name = wav.loadUO(buffer.data(), buffer.size()) ;
-                    auto soutput = std::ofstream(secondpath.string());
-                    if (!soutput.is_open()){
+                    case datatype_t::texture: {
+                        bitmap = bitmapForTexture(buffer);
+                        bitmap.saveToBMP(output,args.colorsize);
+                        break;
+                    }
+                    case datatype_t::sound: {
+                        auto secondary = secondaryForType(type);
+                        auto secondpath=args.filepath(id,directory,secondary);
+                        args.writeOK(secondpath);
+                        
+                        auto wav = ultima::uowave_t();
+                        auto name = wav.loadUO(buffer.data(), buffer.size()) ;
+                        auto soutput = std::ofstream(secondpath.string());
+                        if (!soutput.is_open()){
+                            output.close();
+                            std::filesystem::remove(path) ;
+                            throw std::runtime_error("Unable to create: "s + secondpath.string());
+                        }
+                        soutput<<name<<std::endl;
+                        soutput.close();
+                        wav.save(output);
+                        break;
+                    }
+                    case datatype_t::multi: {
+                        auto entry = ultima::multi_entry_t(buffer,false);
+                        entry.description(output, args.use_hex);
                         output.close();
-                        std::filesystem::remove(path) ;
-                        throw std::runtime_error("Unable to create: "s + secondpath.string());
+                        
+                        break;
                     }
-                    soutput<<name<<std::endl;
-                    soutput.close();
-                    wav.save(output);
-                    break;
+                    default:{
+                        output.close();
+                        std::filesystem::remove(path);
+                        throw("IDX/MUL extract not supported for this type.");
+                        break;
+                        
+                    }
                 }
-                case datatype_t::multi: {
-                    auto entry = ultima::multi_entry_t(buffer,false);
-                    entry.description(output, args.use_hex);
-                    output.close();
-
-                    break;
-                }
-                default:{
-                    output.close();
-                    std::filesystem::remove(path);
-                    break;
-                    
-                }
-         }
+            }
         }
+    }
+    catch(...){
+        throw;
     }
 }
 //=================================================================================
