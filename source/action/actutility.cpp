@@ -234,9 +234,10 @@ auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &pat
 
 }
 //====================================================================================
-auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t &info)->void{
+auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t &info)->std::uint32_t{
     auto buffer = std::vector<char>(4098,0);
     auto count = 0 ;
+    auto amount_processed = std::uint32_t(0);
     while(input.good() && !input.eof()){
         count++;
         input.getline(buffer.data(),4097);
@@ -251,6 +252,7 @@ auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t 
                     try {
                         auto id = static_cast<std::uint32_t>(std::stoul(sid,nullptr,0));
                         if (arg.id(id)){
+                            amount_processed++;
                             if (id <0x4000){
                                 auto tile = ultima::landtile_t(rest, ",");
                                 info.land(id) = tile;
@@ -270,4 +272,5 @@ auto updateInfo(const argument_t &arg, std::ifstream &input, ultima::tileinfo_t 
             }
         }
     }
+    return amount_processed;
 }

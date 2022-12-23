@@ -51,6 +51,7 @@ auto uopMerge(const argument_t &args,datatype_t type) ->void {
     if (args.paths.size()!= 2){
         throw std::runtime_error("Invalid number of paths, format: directory uoppath") ;
     }
+    auto amount_processed = std::uint32_t(0);
     auto directory = args.paths.at(0);
     auto uoppath = args.paths.at(1);
     auto outputpath = uoppath;
@@ -84,6 +85,7 @@ auto uopMerge(const argument_t &args,datatype_t type) ->void {
         auto index = 0 ;
         auto buffer = std::vector<std::uint8_t>();
         for (const auto &id : realids){
+            amount_processed++;
             auto entry = ultima::table_entry();
             entry.offset = static_cast<std::uint64_t>(output.tellp());
             if (validids.find(id) != validids.end()){
@@ -116,7 +118,7 @@ auto uopMerge(const argument_t &args,datatype_t type) ->void {
             index++;
         }
         if (type == datatype_t::multi){
-            
+            amount_processed++;
             auto hashset = ultima::hashset_t();
             hashet.insert(ultima::hashLittle2("build/multicollection/housing.bin"),0);
             auto mapping = ultima::createIDTableMapping(uop, hashset, inoffsets);
@@ -135,6 +137,8 @@ auto uopMerge(const argument_t &args,datatype_t type) ->void {
             output.seekp(offsets.at(index),std::ios::beg);
             entry.save(output);
         }
+        std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+
     }
     catch(...){
         output.close();
@@ -182,6 +186,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
         std::filesystem::remove(outidxpath);
         throw std::runtime_error("Unable to create: "s + outmulpath.string());
     }
+    auto amount_processed = std::uint32_t(0);
     try{
         auto inoffsets = ultima::gatherIDXEntries(idx) ;
         auto number = static_cast<std::uint32_t>(std::max(inoffsets.rbegin()->first,*validids.rbegin())) + 1 ;
@@ -198,6 +203,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
             entry.offset = static_cast<std::uint32_t>(outmul.tellp());
             // Is it in mu valid ids?
             if (validids.find(id)!= validids.end()){
+                amount_processed++;
                 auto path = data.at(id) ;
                 auto input = std::ifstream(path.string(),fileflag);
                 if (!input.is_open()){
@@ -225,6 +231,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
             entry.save(outidx);
             index++;
         }
+        std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
     }
     catch(...){
         outidx.close();
@@ -271,12 +278,14 @@ auto hueMerge(const argument_t &args,datatype_t type) ->void {
     if (!output.is_open()){
         throw std::runtime_error("Unable to create: "s+outpath.string());
     }
+    auto amount_processed = std::uint32_t(0);
     try{
         ultima::createHue(output,count);
         auto buffer = std::vector<std::uint8_t>() ;
         for (std::uint32_t id =0 ; id< count;id++){
             if (validids.find(id)!= validids.end()){
                 // Ok a valid one
+                amount_processed++;
                 auto path = data.at(id) ;
                 auto img = std::ifstream(path.string(),std::ios::binary);
                 if (!img.is_open()){
@@ -295,6 +304,7 @@ auto hueMerge(const argument_t &args,datatype_t type) ->void {
             output.seekp(ultima::hueOffset(id),std::ios::beg);
             output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
         }
+        std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
     }
     catch(...){
         output.close();
@@ -315,7 +325,8 @@ auto infoMerge(const argument_t &args,datatype_t type) ->void {
     args.writeOK(outpath);
     auto info = ultima::tileinfo_t(infopath);
     auto input = std::ifstream(csvpath.string());
-    updateInfo(args, input,  info) ;
+    auto amount_processed = updateInfo(args, input,  info) ;
     info.save(outpath);
-    
+    std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+
 };

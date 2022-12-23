@@ -62,6 +62,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
     auto housing = std::ifstream();
     auto data = contentsFor(directory, primaryForType(type) );
     auto validids = validInContents(arg, data);
+    auto amount_processed = std::uint32_t(0);
     if (validids.empty()){
         std::runtime_error("No valid ids found in: "s + directory.string());
     }
@@ -90,6 +91,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
         auto [hashformat,maxid] = getUOPInfoFor(type);
         auto index = 0 ;
         for (const auto &id:validids){
+            amount_processed++;
             // This is the valid id
             auto path = data.at(id) ;
             auto input = std::ifstream(path.string(),fileflag);
@@ -113,6 +115,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
             output.seekp(current,std::ios::beg);
         }
         if (type == datatype_t::multi){
+            amount_processed++;
             // WE have to do housing.bin
             housing.seekg(0,std::ios::end);
             auto size = static_cast<std::uint64_t>(housing.tellg());
@@ -130,6 +133,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
             output.seekp(offsets.at(index));
             entry.save(output);
         }
+        std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
     }
     catch(...){
         output.close();
@@ -170,6 +174,7 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
     auto idxoffsets = ultima::createIDX(idx, count);
     auto bitmap = bitmap_t<std::uint16_t>();
     auto buffer = std::vector<std::uint8_t>();
+    auto amount_processed = std::uint32_t(0);
     try{
         for (std::uint32_t id = 0 ; id < count;id++){
             auto entry = ultima::idx_t() ;
@@ -179,6 +184,7 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
                 entry.extra=0xFFFFFFFF;
             }
             if (validids.find(id) != validids.end()){
+                amount_processed++;
                 entry.offset = static_cast<std::uint32_t>(mul.tellp());
                 entry.extra = 0 ;
                 auto path = data.at(id);
@@ -193,6 +199,8 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
             idx.seekp(idxoffsets.at(id),std::ios::beg);
             entry.save(idx);
         }
+        std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+
     }
     catch(...){
         idx.close();
@@ -231,12 +239,14 @@ auto createHue(const argument_t &arg,datatype_t type) ->void {
         throw std::runtime_error("Unable to create: "s +huepath.string());
     }
     ultima::createHue(output,count);
+    auto amount_processed = std::uint32_t(0);
     for (const auto &id : validid){
         auto path = potential.at(id) ;
         auto input = std::ifstream(path.string(),std::ios::binary);
         if (!input.is_open()){
             throw std::runtime_error("Unable to open: "s+path.string());
         }
+        amount_processed++;
         auto namepath = path ;
         namepath.replace_extension(".txt") ;
         auto name = nameInFile(namepath);
@@ -246,7 +256,8 @@ auto createHue(const argument_t &arg,datatype_t type) ->void {
         output.seekp(offset,std::ios::beg) ;
         output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
     }
-    
+    std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+
 }
 //================================================================================
 auto createInfo(const argument_t &arg,datatype_t type) ->void {
@@ -261,6 +272,7 @@ auto createInfo(const argument_t &arg,datatype_t type) ->void {
         throw std::runtime_error("Unable to open: "s+inputpath.string());
     }
     auto info = ultima::tileinfo_t() ;
-    updateInfo(arg, input,  info) ;
+    auto amount_processed = updateInfo(arg, input,  info) ;
     info.save(outpath);
+    std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
 }
