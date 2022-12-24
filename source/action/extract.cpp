@@ -271,6 +271,7 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
                         auto height = (entry.extra>>16)&0xFFFF;
                         bitmap = bitmapForLight(width, height, buffer);
                         bitmap.saveToBMP(output,args.colorsize);
+                        break;
                     }
                     default:{
                         output.close();

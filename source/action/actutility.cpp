@@ -218,6 +218,7 @@ auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &pat
             auto [width,height] = bitmap.size();
             entry.extra = (width&0xFFFF) | ((width&0xFFFF)<<16);
             buffer = dataForLight(bitmap);
+            break;
         }
         case datatype_t::sound:{
             entry.extra = id +1 ;

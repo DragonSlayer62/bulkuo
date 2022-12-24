@@ -71,6 +71,7 @@ auto printHelp() ->void {
     std::cout <<"        --gump              (gump  data, bmp files)\n";
     std::cout <<"        --hue               (hue data, bmp and txt files)\n";
     std::cout <<"        --info              (tile information  data, csv file)\n";
+    std::cout <<"        --light             (ligh  data, bmp files)\n";
     std::cout <<"        --multi             (multi  data, csv files)\n";
     std::cout <<"        --sound             (sound data, wav and txt files)\n";
     std::cout <<"        --texture           (texture  data, bmp files)\n";

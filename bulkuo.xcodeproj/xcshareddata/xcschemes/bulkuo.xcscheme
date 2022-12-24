@@ -74,15 +74,19 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--info"
+            argument = "--light"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "uo/tiledata.mul"
+            argument = "uo/lightidx.mul"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "info.csv"
+            argument = "uo/light.mul"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "lights"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

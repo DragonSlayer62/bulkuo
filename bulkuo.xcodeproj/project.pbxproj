@@ -15,6 +15,7 @@
 		640468222952663E00B713AE /* idlist.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 640468202952663E00B713AE /* idlist.cpp */; };
 		640468252952F12C00B713AE /* catlabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 640468232952F12C00B713AE /* catlabel.cpp */; };
 		6404682C29537C9B00B713AE /* actutility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6404682A29537C7D00B713AE /* actutility.cpp */; };
+		647EF88729579D2B00A03511 /* light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 647EF881295776C500A03511 /* light.cpp */; };
 		64EE4532295210D700E7BB3B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4531295210D700E7BB3B /* main.cpp */; };
 		64EE4542295211C800E7BB3B /* argument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4540295211C800E7BB3B /* argument.cpp */; };
 		64EE4545295212B800E7BB3B /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4543295212B800E7BB3B /* types.cpp */; };
@@ -339,6 +340,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				647EF88729579D2B00A03511 /* light.cpp in Sources */,
 				6404682C29537C9B00B713AE /* actutility.cpp in Sources */,
 				64EE457529523A4E00E7BB3B /* uowave.cpp in Sources */,
 				64EE45522952272400E7BB3B /* extract.cpp in Sources */,
