@@ -143,22 +143,7 @@ There is a *Xcode* project.  Open **bulkuo.xcodeproj** in XCode
     - **item = 0x4000-0x10000**  
 - Enter: `./bulkuo --extract --art --label=label/tilename.txt --category=category/sort.txt uo/artLegacyMUL.uop artwork`  
     - This will create artwork in the newly created *artwork* subdirectory. The images will be sorted into land/terrain subdirectories, and have the name append to the tileid.  
-## Better categorization  
-- Copy the *label/tilename.txt* file to *category/types.txt*  
-- Open the *category/types.txt* and replace the "-" with a comma
-- Open the *category/types.txt* and replace the "=" with a comma
-- Import *category/types.txt* as a csv file to a spreadsheet
-- Sort by the name(last column) 
-    - This effectively groups all tiles of the same name together.  
-- Create a directory column before the first column  
-- Add directory entires based on the name   
-    - For entries that you dont care about, delete them or bin them to a spillover directory  
-        - Optionally delete them, and keep the two lines one had in the sort.txt file from above in the end product (they must be the top two lines to not overwrite).  
-- Delete all columns execpt for the id, and directories  
-- Export to a csv file  
-- Open in an editor, and replace all "," with an "="  
-    - It should look like rows of *directory = id*  
-- Use this as a category file when exporting art or textures    
+
 
     
     
