@@ -221,7 +221,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void {
                 // This doesnt exist
                 entry.offset=0xFFFFFFFF;
                 entry.length=0;
-                entry.extra = ((type==datatype_t::art ||type==datatype_t::light) ?0xFFFFFFFF:0);
+                entry.extra = ((type==datatype_t::art ) ?0xFFFFFFFF:0);
             }
             entry.length= static_cast<std::uint32_t>(buffer.size());
             if (!buffer.empty()){
