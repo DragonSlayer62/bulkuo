@@ -8,11 +8,13 @@ add_library(artwork STATIC
     gump.cpp
     hue.cpp
     texture.cpp
+    light.cpp
     animation.hpp
     art.hpp
     gump.hpp
     hue.hpp
     texture.hpp
+    light.hpp
 )
 target_include_directories(artwork
 		PUBLIC

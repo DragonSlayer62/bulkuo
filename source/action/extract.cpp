@@ -25,6 +25,7 @@
 #include "../artwork/art.hpp"
 #include "../artwork/gump.hpp"
 #include "../artwork/hue.hpp"
+#include "../artwork/light.hpp"
 
 
 using namespace std::string_literals;
@@ -45,7 +46,8 @@ std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> extract_m
     {datatype_t::art,extractData},{datatype_t::info,extractInfo},
     {datatype_t::texture,extractIdxMul},{datatype_t::sound,extractData},
     {datatype_t::gump,extractData},{datatype_t::animation,noExtraction},
-    {datatype_t::hue,extractHue},{datatype_t::multi,extractData}
+    {datatype_t::hue,extractHue},{datatype_t::multi,extractData},
+    {datatype_t::light,extractIdxMul}
 };
 
 //=================================================================================
@@ -263,6 +265,12 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
                         output.close();
                         
                         break;
+                    }
+                    case datatype_t::light:{
+                        auto width = entry.extra&0xFFFF ;
+                        auto height = (entry.extra>>16)&0xFFFF;
+                        bitmap = bitmapForLight(width, height, buffer);
+                        bitmap.saveToBMP(output,args.colorsize);
                     }
                     default:{
                         output.close();

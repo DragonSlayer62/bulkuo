@@ -16,7 +16,7 @@ auto actionForName(const std::string &name) ->action_t ;
 
 
 enum class datatype_t {
-    unknown,art,texture,sound,gump,hue,multi,animation,info
+    unknown,art,texture,sound,gump,hue,multi,animation,info,light
 };
 auto nameForDatatype(datatype_t type) -> const std::string& ;
 auto datatypeForName(const std::string &name) ->datatype_t ;

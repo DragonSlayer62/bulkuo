@@ -36,6 +36,7 @@
     <ClCompile Include="source\artwork\gump.cpp" />
     <ClCompile Include="source\artwork\hue.cpp" />
     <ClCompile Include="source\artwork\texture.cpp" />
+    <ClCompile Include="source\artwork\light.cpp" />
     <ClCompile Include="source\uodata\flag.cpp" />
     <ClCompile Include="source\uodata\hash.cpp" />
     <ClCompile Include="source\uodata\hueaccess.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="source\artwork\gump.hpp" />
     <ClInclude Include="source\artwork\hue.hpp" />
     <ClInclude Include="source\artwork\texture.hpp" />
+    <ClInclude Include="source\artwork\light.hpp" />
     <ClInclude Include="source\uodata\flag.hpp" />
     <ClInclude Include="source\uodata\hash.hpp" />
     <ClInclude Include="source\uodata\hueaccess.hpp" />

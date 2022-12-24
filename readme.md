@@ -56,32 +56,27 @@ art data might be:
 This would have all land artwork be in a subdirectory land, and all item artwork be in a subdirectory item.
 ## Types
 Bulkuo can process various data types of uo data.
-### --sound
-This will extract or ingest wav files. There is a seconary file(txt), which is the an internal text string for an entry.
-If that secondary file is not present, an empty text string will be used for creation/merging.
-### --multi
-This will extract or ingest commas separated file (csv) for a multi entry.
-### --gump
-This will extract or ingest bmp files for a gump.
 ### --art
 This will extract or ingest bmp files for art images. IDs from 0 to 0x3FFF must be 44 x 44 pixels.
-### --texture
-This will extract or ingest bmp files.  They must be 64 x 64 or 128 x 128 pixels in size.
-### --info
-This will extract or ingest the the information data about a tile normally contained in **tiledata.mul**. It will be a single csv file.
+### --gump
+This will extract or ingest bmp files for a gump.
 ### --hue =[width,height]
 This will extract a bmp file for the color range, with a secondary text file for the text string.  The optional
 width,height on the --hue is for extraction only. It specified the cell size to use for each color (so the total bmp
 will be (widthx32) x height pixels.  For creation/merging, the bmp can be any size. The width of the bmp is divided by 32 to make a cellsize.
 The color is then taken from pixel(((cellsize x hueindex) + cellsize/2)),height/2).
+### --info
+This will extract or ingest the the information data about a tile normally contained in **tiledata.mul**. It will be a single csv file.
+### --light
+This will extract or ingest bmp files for a light entry. The last channel (blue) is used for the value , as this is a grayscale.
+### --multi
+This will extract or ingest commas separated file (csv) for a multi entry.
+### --sound
+This will extract or ingest wav files. There is a seconary file(txt), which is the an internal text string for an entry.
+If that secondary file is not present, an empty text string will be used for creation/merging.
+### --texture
+This will extract or ingest bmp files.  They must be 64 x 64 or 128 x 128 pixels in size.
 ## Actions
-### --name
-One of **bulkuo's** actions is the creation of name files (--name) which will generate name files  
-utilizing the UO data for sound,hues,info(info names can be used for art data).  Multi names can be
-generated as well, but are hard coded into the program and not read from the data.  
-### --exist
-Exist action will print out all ids that exist in thw data (as constrained by --id) to standard output (This
-can be piped to a file with: **>> filename**).
 ### --create
 **Bulkuo** will scan the directory and all subdirectoris for input.  
 This is of the form:  
@@ -94,6 +89,18 @@ For hue it is :
 **directory mulfiletocreate**  
 
 Remember, the ids used will be restriced by any --id quailifers.
+### --exist
+Exist action will print out all ids that exist in thw data (as constrained by --id) to standard output (This
+can be piped to a file with: **>> filename**).
+### --extract
+This is of the form:  
+**uopsource outputdirectory**  
+or  
+**idxsource mulsource outputdirectory**  
+For info data it is:  
+**mulfilesource outputcsvfile**  
+For hue it is :  
+**mulfilesource outputdirectory**
 ### --merge
 **Bulkuo** will scan the directory and all subdirectoris for input.  
 This is of the form:  
@@ -106,15 +113,10 @@ For hue it is :
 **directory mulfilesource**  
 It will will create new output files with the extension **.bulkuo** for the type of source data it had(uop,idx/mul).
 It will create new uop/mul files, with the contents of the source uop/mul and the directory data (constrained by --ids) either overwritting or adding to.
-### --extract
-This is of the form:  
-**uopsource outputdirectory**  
-or  
-**idxsource mulsource outputdirectory**  
-For info data it is:  
-**mulfilesource outputcsvfile**  
-For hue it is :  
-**mulfilesource outputdirectory**
+### --name
+One of **bulkuo's** actions is the creation of name files (--name) which will generate name files  
+utilizing the UO data for sound,hues,info(info names can be used for art data).  Multi names can be
+generated as well, but are hard coded into the program and not read from the data.  
 
 ## Bulding
 ### Visual Studio

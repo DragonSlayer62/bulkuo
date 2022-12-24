@@ -54,7 +54,7 @@ static const std::map<datatype_t,std::string> datatype_name_mapping{
     {datatype_t::texture,"texture"s},{datatype_t::sound,"sound"s},
     {datatype_t::gump,"gump"s},{datatype_t::hue,"hue"s},
     {datatype_t::multi,"multi"s},{datatype_t::info,"info"s},
-    {datatype_t::animation,"animation"s}
+    {datatype_t::animation,"animation"s},{datatype_t::light,"light"}
 };
 //=================================================================================
 auto nameForDatatype(datatype_t type) -> const std::string& {

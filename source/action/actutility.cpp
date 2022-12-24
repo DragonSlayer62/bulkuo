@@ -12,6 +12,7 @@
 #include "../artwork/gump.hpp"
 #include "../artwork/art.hpp"
 #include "../artwork/texture.hpp"
+#include "../artwork/light.hpp"
 
 #include "../uodata/multicollection.hpp"
 #include "../uodata/uowave.hpp"
@@ -22,7 +23,8 @@ using namespace std::string_literals;
 static const std::map<datatype_t,std::string> primary_extensions{
     {datatype_t::art,".bmp"s},{datatype_t::gump,".bmp"s},
     {datatype_t::sound,".wav"s},{datatype_t::hue,".bmp"s},
-    {datatype_t::multi,".csv"s},{datatype_t::texture,".bmp"s}
+    {datatype_t::multi,".csv"s},{datatype_t::texture,".bmp"s},
+    {datatype_t::light,".bmp"s}
 };
 //=================================================================================
 static const std::map<datatype_t,std::string> secondary_extensions{
@@ -123,7 +125,7 @@ static std::map<datatype_t,std::uint32_t> min_idx_tileid {
     {datatype_t::gump,0xFFFe},{datatype_t::art,0x13ffd},
     {datatype_t::sound,0xFFE},{datatype_t::multi,0x21ff},
     {datatype_t::texture,0x3FFF},{datatype_t::animation,0},
-    {datatype_t::hue,2999}
+    {datatype_t::hue,2999},{datatype_t::light,99}
 };
 //====================================================================================
 auto minIDXForType(datatype_t type) ->std::uint32_t {
@@ -210,6 +212,12 @@ auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &pat
                 buffer = dataForItem(bitmap);
             }
             break;
+        }
+        case datatype_t::light: {
+            bitmap =bitmap_t<std::uint16_t>::fromBMP(input);
+            auto [width,height] = bitmap.size();
+            entry.extra = (width&0xFFFF) | ((width&0xFFFF)<<16);
+            buffer = dataForLight(bitmap);
         }
         case datatype_t::sound:{
             entry.extra = id +1 ;

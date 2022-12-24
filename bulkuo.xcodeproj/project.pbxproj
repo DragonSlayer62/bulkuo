@@ -71,6 +71,11 @@
 		640468292953598400B713AE /* CMakeLists.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		6404682A29537C7D00B713AE /* actutility.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = actutility.cpp; sourceTree = "<group>"; };
 		6404682B29537C7D00B713AE /* actutility.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = actutility.hpp; sourceTree = "<group>"; };
+		647EF881295776C500A03511 /* light.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = light.cpp; sourceTree = "<group>"; };
+		647EF882295776C500A03511 /* light.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = light.hpp; sourceTree = "<group>"; };
+		647EF884295777B500A03511 /* bulkuo.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = bulkuo.vcxproj.filters; sourceTree = "<group>"; };
+		647EF885295777B500A03511 /* bulkuo.sln */ = {isa = PBXFileReference; lastKnownFileType = text; path = bulkuo.sln; sourceTree = "<group>"; };
+		647EF886295777B500A03511 /* bulkuo.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = bulkuo.vcxproj; sourceTree = "<group>"; };
 		64EE452E295210D700E7BB3B /* bulkuo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bulkuo; sourceTree = BUILT_PRODUCTS_DIR; };
 		64EE4531295210D700E7BB3B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		64EE453D2952119200E7BB3B /* wf.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = wf.ico; sourceTree = "<group>"; };
@@ -128,9 +133,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		647EF8832957779600A03511 /* windows */ = {
+			isa = PBXGroup;
+			children = (
+				647EF885295777B500A03511 /* bulkuo.sln */,
+				647EF886295777B500A03511 /* bulkuo.vcxproj */,
+				647EF884295777B500A03511 /* bulkuo.vcxproj.filters */,
+			);
+			name = windows;
+			sourceTree = "<group>";
+		};
 		64EE4525295210D700E7BB3B = {
 			isa = PBXGroup;
 			children = (
+				647EF8832957779600A03511 /* windows */,
 				640468282953597100B713AE /* CMakeLists.txt */,
 				6404682629532BB400B713AE /* readme.md */,
 				64046827295350A500B713AE /* changelog.txt */,
@@ -209,6 +225,8 @@
 				6404681729525E6900B713AE /* gump.hpp */,
 				6404680F29525E6900B713AE /* hue.hpp */,
 				6404681629525E6900B713AE /* texture.hpp */,
+				647EF881295776C500A03511 /* light.cpp */,
+				647EF882295776C500A03511 /* light.hpp */,
 				6404681029525E6900B713AE /* CMakeLists.txt */,
 			);
 			path = artwork;
