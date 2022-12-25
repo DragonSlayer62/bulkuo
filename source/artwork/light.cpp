@@ -25,8 +25,8 @@ auto dataForLight(const bitmap_t<std::uint16_t> &bitmap) ->std::vector<std::uint
     auto [width,height]  = bitmap.size();
     auto data = std::vector<std::uint8_t>(width*height,0);
     auto value = data.begin();
-    for (std::uint32_t y=0 ; y<height;y++){
-        for (std::uint32_t x=0 ; x<width;x++){
+    for (std::uint32_t y=0 ; y<static_cast<std::uint32_t>(height);y++){
+        for (std::uint32_t x=0 ; x< static_cast<std::uint32_t>(width);x++){
             auto chan = static_cast<std::uint16_t>(*value) ;
             auto channel = chan & 0x1f;
             *value = channel ;
