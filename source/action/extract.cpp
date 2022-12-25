@@ -96,63 +96,71 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
     try{
         for (auto const &[id,entry]:mapping){
             if (args.id(id)){
-                auto extension = primaryForType(type);
-                auto path = args.filepath(id, directory, extension);
-                args.writeOK(path);
-                auto output = std::ofstream(path.string(),fileflag);
-                if (!output.is_open()){
-                    throw std::runtime_error("Unable to create: "s + path.string());
-                }
-                auto buffer = ultima::readUOPData(entry, input) ;
-                amount_processed++;
-                switch(type){
-                    case datatype_t::gump:{
-                        auto bitmap = bitmap_t<std::uint16_t>();
-                        bitmap = bitmapForGump(buffer);
-                        bitmap.saveToBMP(output,args.colorsize);
-                        break;
+                if (type!= datatype_t::animation){
+                    auto extension = primaryForType(type);
+                    auto path = args.filepath(id, directory, extension);
+                    args.writeOK(path);
+                    auto output = std::ofstream(path.string(),fileflag);
+                    if (!output.is_open()){
+                        throw std::runtime_error("Unable to create: "s + path.string());
                     }
-                    case datatype_t::art:{
-                        auto bitmap = bitmap_t<std::uint16_t>();
-                        if (id <0x4000){
-                            bitmap = bitmapForTerrain(buffer);
+                    auto buffer = ultima::readUOPData(entry, input) ;
+                    amount_processed++;
+                    switch(type){
+                        case datatype_t::gump:{
+                            auto bitmap = bitmap_t<std::uint16_t>();
+                            bitmap = bitmapForGump(buffer);
+                            bitmap.saveToBMP(output,args.colorsize);
+                            break;
                         }
-                        else {
-                            bitmap = bitmapForItem(buffer);
+                        case datatype_t::art:{
+                            auto bitmap = bitmap_t<std::uint16_t>();
+                            if (id <0x4000){
+                                bitmap = bitmapForTerrain(buffer);
+                            }
+                            else {
+                                bitmap = bitmapForItem(buffer);
+                            }
+                            bitmap.saveToBMP(output,args.colorsize);
+                            break;
                         }
-                        bitmap.saveToBMP(output,args.colorsize);
-                        break;
-                    }
-                    case datatype_t::sound:{
-                        auto secondary = secondaryForType(type);
-                        auto secondpath=args.filepath(id,directory,secondary);
-                        args.writeOK(secondpath);
-                        
-                        auto wav = ultima::uowave_t();
-                        auto name = wav.loadUO(buffer.data(), buffer.size()) ;
-                        auto soutput = std::ofstream(secondpath.string());
-                        if (!soutput.is_open()){
+                        case datatype_t::sound:{
+                            auto secondary = secondaryForType(type);
+                            auto secondpath=args.filepath(id,directory,secondary);
+                            args.writeOK(secondpath);
+                            
+                            auto wav = ultima::uowave_t();
+                            auto name = wav.loadUO(buffer.data(), buffer.size()) ;
+                            auto soutput = std::ofstream(secondpath.string());
+                            if (!soutput.is_open()){
+                                output.close();
+                                std::filesystem::remove(path) ;
+                                throw std::runtime_error("Unable to create: "s + secondpath.string());
+                            }
+                            soutput<<name<<std::endl;
+                            soutput.close();
+                            wav.save(output);
+                            break;
+                        }
+                        case datatype_t::multi: {
+                            auto entry = ultima::multi_entry_t(buffer,true);
+                            entry.description(output, args.use_hex);
                             output.close();
-                            std::filesystem::remove(path) ;
-                            throw std::runtime_error("Unable to create: "s + secondpath.string());
+                            break;
                         }
-                        soutput<<name<<std::endl;
-                        soutput.close();
-                        wav.save(output);
-                        break;
+                        case datatype_t::animation: {
+                            break;
+                        }
+                        default: {
+                            // we shouldn't be here?
+                            output.close();
+                            std::filesystem::remove(path);
+                            throw std::runtime_error("UOP extract not supported for data type.");
+                        }
                     }
-                    case datatype_t::multi: {
-                        auto entry = ultima::multi_entry_t(buffer,true);
-                        entry.description(output, args.use_hex);
-                        output.close();
-                        break;
-                    }
-                    default: {
-                        // we shouldn't be here?
-                        output.close();
-                        std::filesystem::remove(path);
-                        throw std::runtime_error("UOP extract not supported for data type.");
-                    }
+                }
+                else {
+                    
                 }
             }
         }

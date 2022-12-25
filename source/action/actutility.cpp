@@ -24,7 +24,7 @@ static const std::map<datatype_t,std::string> primary_extensions{
     {datatype_t::art,".bmp"s},{datatype_t::gump,".bmp"s},
     {datatype_t::sound,".wav"s},{datatype_t::hue,".bmp"s},
     {datatype_t::multi,".csv"s},{datatype_t::texture,".bmp"s},
-    {datatype_t::light,".bmp"s}
+    {datatype_t::light,".bmp"s},{datatype_t::animation,".bmp"s}
 };
 //=================================================================================
 static const std::map<datatype_t,std::string> secondary_extensions{

@@ -16,6 +16,7 @@
 		640468252952F12C00B713AE /* catlabel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 640468232952F12C00B713AE /* catlabel.cpp */; };
 		6404682C29537C9B00B713AE /* actutility.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6404682A29537C7D00B713AE /* actutility.cpp */; };
 		647EF88729579D2B00A03511 /* light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 647EF881295776C500A03511 /* light.cpp */; };
+		647EF88A2957DE1700A03511 /* animsupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 647EF8882957DE1700A03511 /* animsupport.cpp */; };
 		64EE4532295210D700E7BB3B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4531295210D700E7BB3B /* main.cpp */; };
 		64EE4542295211C800E7BB3B /* argument.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4540295211C800E7BB3B /* argument.cpp */; };
 		64EE4545295212B800E7BB3B /* types.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 64EE4543295212B800E7BB3B /* types.cpp */; };
@@ -77,6 +78,8 @@
 		647EF884295777B500A03511 /* bulkuo.vcxproj.filters */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = bulkuo.vcxproj.filters; sourceTree = "<group>"; };
 		647EF885295777B500A03511 /* bulkuo.sln */ = {isa = PBXFileReference; lastKnownFileType = text; path = bulkuo.sln; sourceTree = "<group>"; };
 		647EF886295777B500A03511 /* bulkuo.vcxproj */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = bulkuo.vcxproj; sourceTree = "<group>"; };
+		647EF8882957DE1700A03511 /* animsupport.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = animsupport.cpp; sourceTree = "<group>"; };
+		647EF8892957DE1700A03511 /* animsupport.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = animsupport.hpp; sourceTree = "<group>"; };
 		64EE452E295210D700E7BB3B /* bulkuo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bulkuo; sourceTree = BUILT_PRODUCTS_DIR; };
 		64EE4531295210D700E7BB3B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		64EE453D2952119200E7BB3B /* wf.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = wf.ico; sourceTree = "<group>"; };
@@ -261,6 +264,8 @@
 				64EE455A2952370B00E7BB3B /* uophash.hpp */,
 				6404682A29537C7D00B713AE /* actutility.cpp */,
 				6404682B29537C7D00B713AE /* actutility.hpp */,
+				647EF8882957DE1700A03511 /* animsupport.cpp */,
+				647EF8892957DE1700A03511 /* animsupport.hpp */,
 			);
 			path = action;
 			sourceTree = "<group>";
@@ -346,6 +351,7 @@
 				64EE45522952272400E7BB3B /* extract.cpp in Sources */,
 				64EE457029523A4E00E7BB3B /* flag.cpp in Sources */,
 				64EE45512952272400E7BB3B /* merge.cpp in Sources */,
+				647EF88A2957DE1700A03511 /* animsupport.cpp in Sources */,
 				640468222952663E00B713AE /* idlist.cpp in Sources */,
 				64EE45582952273500E7BB3B /* exist.cpp in Sources */,
 				64EE4542295211C800E7BB3B /* argument.cpp in Sources */,

@@ -180,7 +180,7 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
             auto entry = ultima::idx_t() ;
             entry.offset=0xFFFFFFFF;
             entry.length = 0 ;
-            if ((type==datatype_t::art)){
+            if (type==datatype_t::art){
                 entry.extra=0xFFFFFFFF;
             }
             if (validids.find(id) != validids.end()){

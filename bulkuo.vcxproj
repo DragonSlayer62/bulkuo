@@ -31,6 +31,7 @@
     <ClCompile Include="source\action\merge.cpp" />
     <ClCompile Include="source\action\names.cpp" />
     <ClCompile Include="source\action\uophash.cpp" />
+    <ClCompile Include="source\action\animsupport.cpp" />
     <ClCompile Include="source\artwork\animation.cpp" />
     <ClCompile Include="source\artwork\art.cpp" />
     <ClCompile Include="source\artwork\gump.cpp" />
@@ -60,6 +61,7 @@
     <ClInclude Include="source\action\merge.hpp" />
     <ClInclude Include="source\action\names.hpp" />
     <ClInclude Include="source\action\uophash.hpp" />
+    <ClInclude Include="source\action\animsupport.hpp" />
     <ClInclude Include="source\utility\strutil.hpp" />
     <ClInclude Include="source\artwork\animation.hpp" />
     <ClInclude Include="source\artwork\art.hpp" />

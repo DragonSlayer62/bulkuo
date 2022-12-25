@@ -61,6 +61,9 @@
     <ClCompile Include="source\action\uophash.cpp">
       <Filter>source\action</Filter>
     </ClCompile>
+    <ClCompile Include="source\action\animsupport.cpp">
+        <Filter>source\action</Filter>
+    </ClCompile>
     <ClCompile Include="source\uodata\multicollection.cpp">
       <Filter>source\uodata</Filter>
     </ClCompile>
@@ -108,7 +111,10 @@
     <ClInclude Include="source\action\extract.hpp">
       <Filter>source\action</Filter>
     </ClInclude>
-    <ClInclude Include="source\uodata\flag.hpp">
+    <ClInclude Include="source\action\animsupport.hpp">
+        <Filter>source\action</Filter>
+    </ClInclude>
+   <ClInclude Include="source\uodata\flag.hpp">
       <Filter>source\uodata</Filter>
     </ClInclude>
     <ClInclude Include="source\utility\strutil.hpp">
