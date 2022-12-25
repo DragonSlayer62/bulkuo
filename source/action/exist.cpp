@@ -41,7 +41,8 @@ std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> exist_map
     {datatype_t::art,genericExist},{datatype_t::info,noExist},
     {datatype_t::texture,idxmulExist},{datatype_t::sound,genericExist},
     {datatype_t::gump,genericExist},{datatype_t::hue,hueExist},
-    {datatype_t::multi,genericExist},{datatype_t::animation,idxmulExist}
+    {datatype_t::multi,genericExist},{datatype_t::animation,idxmulExist},
+    {datatype_t::light,idxmulExist}
 };
 
 

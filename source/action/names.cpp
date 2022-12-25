@@ -36,7 +36,8 @@ std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> names_map
     {datatype_t::art,noNames},{datatype_t::info,infoName},
     {datatype_t::texture,noNames},{datatype_t::sound,soundName},
     {datatype_t::gump,noNames},{datatype_t::animation,noNames},
-    {datatype_t::hue,hueName},{datatype_t::multi,multiName}
+    {datatype_t::hue,hueName},{datatype_t::multi,multiName},
+    {datatype_t::light,noNames}
 };
 
 //=================================================================================
