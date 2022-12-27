@@ -3,6 +3,7 @@
 #include "animation.hpp"
 #include <stdexcept>
 #include <set>
+#include <filesystem>
 #include <iostream>
 #include <algorithm>
 #include <sstream>
