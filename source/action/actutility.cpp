@@ -137,14 +137,14 @@ auto minIDXForType(datatype_t type) ->std::uint32_t {
 }
 
 //====================================================================================
-auto createUOPEntry(datatype_t type, std::uint32_t id, std::filesystem::path &path,std::ifstream &input,std::vector<std::uint8_t> &buffer, ultima::table_entry &entry)->void{
+auto createUOPEntry(datatype_t type, std::uint32_t id, std::filesystem::path &path,std::ifstream &input,std::vector<std::uint8_t> &buffer)->bool{
     auto bitmap = bitmap_t<std::uint16_t>();
+    auto compress = false ;
+   
     switch(type) {
         case datatype_t::gump:{
             bitmap = bitmap_t<std::uint16_t>::fromBMP(input);
             buffer = dataForGump(bitmap);
-            entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-            
             break;
         }
         case datatype_t::art:{
@@ -155,8 +155,6 @@ auto createUOPEntry(datatype_t type, std::uint32_t id, std::filesystem::path &pa
             else {
                 buffer = dataForItem(bitmap);
             }
-            entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-            
             break;
         }
         case datatype_t::sound:{
@@ -166,22 +164,20 @@ auto createUOPEntry(datatype_t type, std::uint32_t id, std::filesystem::path &pa
             
             auto wav = ultima::uowave_t(input);
             buffer = wav.createUO(name);
-            entry.decompressed_length =static_cast<std::uint32_t>(buffer.size());
             break;
         }
         case datatype_t::multi:{
             auto multi = ultima::multi_entry_t();
             multi.load(input);
             buffer = multi.data(true);
-            entry.decompressed_length = static_cast<std::uint32_t>(buffer.size());
-            buffer = ultima::compressUOPData(buffer);
-            entry.compression=1;
+            compress = true ;
             break;
         }
         default:{
             throw std::runtime_error("Uop creation not supported.");
         }
     }
+    return compress ;
 }
 //====================================================================================
 auto createIDXEntry(datatype_t type, std::uint32_t id,std::filesystem::path &path, std::ifstream &input,std::vector<std::uint8_t> &buffer, ultima::idx_t &entry) ->void{

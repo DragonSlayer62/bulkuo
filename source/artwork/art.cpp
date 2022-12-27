@@ -112,7 +112,7 @@ auto bitmapForTerrain(const std::vector<std::uint8_t> &data) ->bitmap_t<std::uin
 	}
 	return image ;
 }
-
+#include "strutil.hpp"
 //=================================================================================
 auto dataForTerrain(const bitmap_t<std::uint16_t> &image) ->std::vector<std::uint8_t> {
 	auto data = std::vector<std::uint8_t>(2024,0) ;
@@ -121,8 +121,8 @@ auto dataForTerrain(const bitmap_t<std::uint16_t> &image) ->std::vector<std::uin
 	auto xloc = 21 ;
 	for (auto height = 0 ; height < 22;height++){
 		for (auto offset = 0 ; offset < run ; offset++){
-            //std::cout <<"Pixel: "<<xloc+offset <<" , " << height<<std::endl;
-			*color = image.pixel(xloc+offset, height) & 0x7FFF ;
+            std::cout <<"Pixel: "<<xloc+offset <<" , " << height<<" - Color: "<<strutil::ntos(image.pixel(xloc+offset, height),strutil::radix_t::hex,true,4 ) <<std::endl;
+			*color = image.pixel(xloc+offset, height)  ;
 			color++ ;
 		}
         //std::cout <<std::endl;

@@ -26,6 +26,7 @@
 #include "../artwork/gump.hpp"
 #include "../artwork/hue.hpp"
 #include "../artwork/light.hpp"
+#include "../artwork/animation.hpp"
 
 
 using namespace std::string_literals;
@@ -36,7 +37,7 @@ auto noExtraction(const argument_t &args, datatype_t type)->void ;
 auto extractData(const argument_t &args, datatype_t type) ->void ;
 auto extractHue(const argument_t &args, datatype_t type) ->void;
 auto extractInfo(const argument_t &args, datatype_t type) ->void;
-
+auto extractAnimation(const argument_t &args, datatype_t type) ->void;
 //==================================================================================
 // Constants used
 //=================================================================================
@@ -45,7 +46,7 @@ auto extractInfo(const argument_t &args, datatype_t type) ->void;
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> extract_mapping{
     {datatype_t::art,extractData},{datatype_t::info,extractInfo},
     {datatype_t::texture,extractIdxMul},{datatype_t::sound,extractData},
-    {datatype_t::gump,extractData},{datatype_t::animation,noExtraction},
+    {datatype_t::gump,extractData},{datatype_t::animation,extractAnimation},
     {datatype_t::hue,extractHue},{datatype_t::multi,extractData},
     {datatype_t::light,extractIdxMul}
 };
@@ -375,3 +376,74 @@ auto extractInfo(const argument_t &args, datatype_t type) ->void{
     }
     std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
 }
+
+//==================================================================================
+auto extractAnimation(const argument_t &args, datatype_t type) ->void{
+    if (args.paths.size() != 4){
+        throw std::runtime_error("Invalid # of paths, format: idxfile mulfile bmp_csv_directory replaceable_directory ");
+    }
+    auto idxpath = args.paths.at(0);
+    auto mulpath = args.paths.at(1);
+    auto directory = args.paths.at(2);
+    auto secondary_directory = args.paths.at(3);
+    auto amount_processed = 0 ;
+    auto idx = std::ifstream(idxpath.string(),std::ios::binary) ;
+    if (!idx.is_open()){
+        throw std::runtime_error("Unable to open: "s+idxpath.string());
+    }
+    auto mul = std::ifstream(mulpath.string(),std::ios::binary) ;
+    if (!mul.is_open()){
+        throw std::runtime_error("Unable to open: "s+mulpath.string());
+    }
+    idx.seekg(0,std::ios::end) ;
+    auto numentries = static_cast<std::uint32_t>(idx.tellg()/12) ;
+    idx.seekg(0,std::ios::beg) ;
+    for (std::uint32_t id = 0 ; id < numentries;id++){
+        auto entry = ultima::idx_t(idx);
+        // First, do we care about this id?
+        if (args.id(id)){
+            // We do
+            // It can be one of three, it can "replaceable", or a picture, or empty.
+            if ((entry.offset == 0) && (entry.length == 0) && (entry.extra == 0) ){
+                // this is a swapable!
+                amount_processed++;
+                auto path = args.filepath(id, secondary_directory, ".swapped");
+                args.writeOK(path);
+                auto output = std::ofstream(path.string());
+                if (!output.is_open()){
+                    throw std::runtime_error("Unable to create: "s+path.string());
+                }
+            }
+            else if ((entry.offset != 0xFFFFFFFF) && (entry.length > 0) && (entry.extra != 0xFFFFFFFF)){
+                amount_processed++ ;
+                mul.seekg(entry.offset,std::ios::beg);
+                auto buffer = std::vector<std::uint8_t>(entry.length,0);
+                mul.read(reinterpret_cast<char*>(buffer.data()),buffer.size());
+                auto animation = animation_t(buffer);
+                auto path = args.filepath(id, directory, ".csv");
+                args.writeOK(path);
+                auto output = std::ofstream(path.string());
+                output << animation.description();
+                output.close() ;
+                auto [first,label] = strutil::split(path.stem().string(),"-");
+                auto framenum = 0 ;
+                for (const auto &frame:animation.frames){
+                    if (!frame.image.empty()){
+                        auto file =  first+"."s+std::to_string(framenum) + (label.empty()?""s:("-"s+label)) + ".bmp"s;
+                        path.replace_filename(std::filesystem::path(file));
+                        args.writeOK(path);
+                        auto output = std::ofstream(path.string(),std::ios::binary);
+                        if (!output.is_open()){
+                            throw std::runtime_error("Unable to create: "s+path.string());
+                        }
+                        frame.image.saveToBMP(output,args.colorsize);
+                     }
+                }
+
+            }
+        }
+        
+    }
+    std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+}
+

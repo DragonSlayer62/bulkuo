@@ -221,7 +221,7 @@ namespace ultima{
     auto readUOPData(const table_entry &entry, std::ifstream &input) ->std::vector<std::uint8_t> {
         auto buffer = std::vector<std::uint8_t>(entry.compressed_length,0) ;
         input.seekg(entry.offset+entry.header_length,std::ios::beg);
-        input.read(reinterpret_cast<char*>(buffer.data()),entry.compressed_length);
+        input.read(reinterpret_cast<char*>(buffer.data()),buffer.size());
         if (entry.compression){
             auto temp = std::vector<std::uint8_t>(entry.decompressed_length,0);
             uLong destlen = static_cast<uLongf>(temp.size()) ;

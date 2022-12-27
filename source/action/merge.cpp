@@ -97,7 +97,15 @@ auto uopMerge(const argument_t &args,datatype_t type) ->void {
                     std::filesystem::remove(outputpath);
                     throw std::runtime_error("Unable to open: "s + path.string());
                 }
-                createUOPEntry(type, id, path, input, buffer, entry);
+                auto compress = createUOPEntry(type,id, path,input,buffer);
+               
+                
+                entry.decompressed_length =static_cast<std::uint32_t>(buffer.size());
+                if (compress){
+                    buffer = ultima::compressUOPData(buffer);
+                    entry.compression = 1 ;
+                }
+
             }
             else {
                 uop.seekg(inmapping.at(id).offset + inmapping.at(id).header_length,std::ios::beg);

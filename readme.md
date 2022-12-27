@@ -55,7 +55,15 @@ art data might be:
 **item = 0x4000- 0x13fff**  
 This would have all land artwork be in a subdirectory land, and all item artwork be in a subdirectory item.
 ## Types
-Bulkuo can process various data types of uo data.
+Bulkuo can process various data types of uo data.  
+### --animation  
+This will extract animations from an idx/mul file combination.  It takes two directories for output. The first directory is
+for entries that have actual data, so bmps and csv data will be placed there. The second directory is a list of files with the id that 
+indicates for that entry, no data is available, but it is an valid id, that can be substituted by information in the client text files.
+These entires are used on creation/merging to  endure the created idx/mul does not lose this information (and one can change it).
+The csv files created, indicates for each animation id, how many frames exist, an for each frame, if it has an image, and the centerX,centerY
+for the offset when drawing that image.  Frames are labeled as: animationID.frameID[-label].bmp , where the [-label] is only present 
+if the --label option is used.  
 ### --art
 This will extract or ingest bmp files for art images. IDs from 0 to 0x3FFF must be 44 x 44 pixels.
 ### --gump

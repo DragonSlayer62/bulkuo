@@ -11,7 +11,6 @@ add_library(action STATIC
     merge.cpp
     names.cpp
     uophash.cpp
-    animsupport.cpp
     actions.hpp
     actutility.hpp
     create.hpp
@@ -20,7 +19,6 @@ add_library(action STATIC
     merge.hpp
     names.hpp
     uophash.hpp
-    animsupport.hpp
 
 )
 target_include_directories(action

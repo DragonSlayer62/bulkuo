@@ -86,6 +86,7 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
     }
     try{
         auto offsets = ultima::createUOP(output, count);
+        output.seekp(0,std::ios::end); // Go the end of the file!
         auto buffer = std::vector<std::uint8_t>();
         auto bitmap = bitmap_t<std::uint16_t>();
         auto [hashformat,maxid] = getUOPInfoFor(type);
@@ -101,15 +102,24 @@ auto createUOP(const argument_t &arg,datatype_t type) ->void {
                 throw std::runtime_error("Unable to open: "s + path.string());
             }
             auto entry = ultima::table_entry();
+            entry.compression = 0 ;
             auto hash = strutil::format(hashformat,id);
             entry.identifier = ultima::hashLittle2(hash);
-            createUOPEntry(type,id, path,input,buffer, entry);
+            auto compress = createUOPEntry(type,id, path,input,buffer);
+            
+            
+            entry.decompressed_length =static_cast<std::uint32_t>(buffer.size());
+            if (compress){
+                buffer = ultima::compressUOPData(buffer);
+                entry.compression = 1 ;
+            }
             entry.compressed_length =static_cast<std::uint32_t>(buffer.size());
             entry.data_block_hash=ultima::hashAdler32(buffer);
             entry.offset = static_cast<std::uint64_t>(output.tellp());
-            output.write(reinterpret_cast<char*>(buffer.data()),data.size());
+            output.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
+            
             auto current = output.tellp();
-            output.seekp(offsets.at(index));
+            output.seekp(offsets.at(index),std::ios::beg);
             index++;
             entry.save(output);
             output.seekp(current,std::ios::beg);
@@ -180,7 +190,7 @@ auto createIDXMul(const argument_t &arg,datatype_t type) ->void {
             auto entry = ultima::idx_t() ;
             entry.offset=0xFFFFFFFF;
             entry.length = 0 ;
-            if (type==datatype_t::art){
+            if ((type==datatype_t::art)||(type == datatype_t::animation)){
                 entry.extra=0xFFFFFFFF;
             }
             if (validids.find(id) != validids.end()){
