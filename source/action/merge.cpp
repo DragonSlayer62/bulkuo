@@ -20,6 +20,7 @@
 
 #include "../artwork/bitmap.hpp"
 #include "../artwork/hue.hpp"
+#include "../artwork/animation.hpp"
 
 using namespace std::string_literals;
 
@@ -30,6 +31,7 @@ auto idxmulMerge(const argument_t &args,datatype_t type) ->void ;
 auto uopidxmulMerge(const argument_t &args,datatype_t type) ->void ;
 auto hueMerge(const argument_t &args,datatype_t type) ->void ;
 auto infoMerge(const argument_t &args,datatype_t type) ->void ;
+auto mergeAnimationMul(const argument_t &arg,datatype_t type) ->void;
 //=================================================================================
 auto noMerge(const argument_t &args,datatype_t type) ->void {
     auto name = nameForDatatype(type);
@@ -43,7 +45,7 @@ auto noMerge(const argument_t &args,datatype_t type) ->void {
 std::map<datatype_t,std::function<void(const argument_t&,datatype_t)>> merge_mapping{
     {datatype_t::art,uopidxmulMerge},{datatype_t::info,infoMerge},
     {datatype_t::texture,idxmulMerge},{datatype_t::sound,uopidxmulMerge},
-    {datatype_t::gump,uopidxmulMerge},{datatype_t::animation,noMerge},
+    {datatype_t::gump,uopidxmulMerge},{datatype_t::animation,mergeAnimationMul},
     {datatype_t::hue,hueMerge},{datatype_t::multi,uopidxmulMerge}
 };
 //===============================================================================
@@ -338,3 +340,135 @@ auto infoMerge(const argument_t &args,datatype_t type) ->void {
     std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
 
 };
+//================================================================================
+auto mergeAnimationMul(const argument_t &arg,datatype_t type) ->void {
+    if (arg.paths.size()!=4){
+        throw std::runtime_error("Invalid number of paths, format is: csv_bmp_directory replaceable_directory idxinput mulinput");
+    }
+    auto directory = arg.paths.at(0) ;
+    auto second_directory = arg.paths.at(1) ;
+    auto idxpath = arg.paths.at(2) ;
+    auto mulpath = arg.paths.at(3) ;
+    auto idxoutpath = idxpath ;
+    idxoutpath.replace_extension(std::filesystem::path(idxoutpath.extension().string()+".bulkuo"s));
+    auto muloutpath = mulpath ;
+    muloutpath.replace_extension(std::filesystem::path(muloutpath.extension().string()+".bulkuo"s));
+    arg.writeOK(idxoutpath);
+    arg.writeOK(muloutpath);
+    auto anims = contentsFor(directory, ".csv") ;
+    auto replaceable = contentsFor(second_directory, ".swapped");
+    if (anims.empty()) {
+        throw std::runtime_error("Found no animations (.csv) in : "s+directory.string()) ;
+    }
+    auto valid = validInContents(arg, anims) ;
+    if (valid.empty()){
+        throw std::runtime_error("No ids in selected list found in : "s+directory.string()) ;
+    }
+    arg.writeOK(idxpath);
+    arg.writeOK(mulpath);
+    auto amount_processed = 0 ;
+    auto idxin = std::ifstream(idxpath.string(),std::ios::binary);
+    if (!idxin.is_open()){
+        throw std::runtime_error("Unable to open: "s+idxpath.string());
+    }
+    auto mulin = std::ifstream(mulpath.string(),std::ios::binary);
+    if (!mulin.is_open()){
+        throw std::runtime_error("Unable to open: "s+mulpath.string());
+    }
+    auto idx = std::ofstream(idxoutpath.string(),std::ios::binary) ;
+    if (!idx.is_open()){
+        throw std::runtime_error("Unable to create: "s +idxoutpath.string());
+    }
+    auto mul = std::ofstream(muloutpath.string(),std::ios::binary);
+    if (!mul.is_open()){
+        idx.close();
+        std::filesystem::remove(idxoutpath);
+        throw std::runtime_error("Unable to create: "s +muloutpath.string());
+    }
+    
+    auto offsets = ultima::gatherIDXOffsets(idxin);
+    auto numentries = std::max((*valid.rbegin())+1, static_cast<std::uint32_t>(offsets.size()));
+    
+    
+    for (std::uint32_t id = 0 ; id < numentries;id++){
+        auto entry = ultima::idx_t() ;
+        if (arg.id(id)){
+            auto iter = anims.find(id);
+            if (iter != anims.end()){
+                auto input = std::ifstream(iter->second.string());
+                if (!input.is_open()){
+                    idx.close();
+                    mul.close();
+                    std::filesystem::remove(idxpath);
+                    std::filesystem::remove(mulpath);
+                    throw std::runtime_error("Unable to open: "s + iter->second.string());
+                }
+                auto anim = animation_t(input, iter->second);
+                auto buffer = anim.data() ;
+                entry.offset = static_cast<std::uint32_t>(mul.tellp()) ;
+                entry.length =static_cast<std::uint32_t>(buffer.size());
+                entry.extra = 0 ;
+                mul.write(reinterpret_cast<char*>(buffer.data()),buffer.size());
+                amount_processed++;
+            }
+            else {
+                auto iter = replaceable.find(id) ;
+                if (iter != replaceable.end()){
+                    // It is!
+                    // for now, so no
+                    entry.offset = 0x0 ;
+                    entry.extra = 0x0 ;
+                    entry.length = 0x0 ;
+                }
+                else {
+                    // for now, so no
+                    entry.offset = 0xFFFFFFFF ;
+                    entry.extra = 0xFFFFFFFF ;
+                    entry.length = 0xFFFFFFFF ;
+                    
+                }
+                
+            }
+        }
+        else {
+            // This is not a valid id to be included,
+            if (id < static_cast<std::uint32_t>(offsets.size())){
+                idxin.seekg(offsets.at(id),std::ios::beg);
+                auto cidx = ultima::idx_t(idxin);
+                if (cidx.valid()){
+                    auto buffer = std::vector<std::uint8_t>(cidx.length,0);
+                    mulin.seekg(cidx.offset,std::ios::beg);
+                    mulin.read(reinterpret_cast<char*>(buffer.data()),buffer.size());
+                    entry.offset = static_cast<std::uint32_t>(mul.tellp());
+                    entry.length = cidx.length;
+                    entry.extra = cidx.extra ;
+                    mul.write(reinterpret_cast<char*>(buffer.data()), buffer.size());
+                }
+                else {
+                    entry = cidx ;
+                }
+            }
+            else {
+                auto iter = replaceable.find(id) ;
+                if (iter != replaceable.end()){
+                    // It is!
+                    // for now, so no
+                    entry.offset = 0x0 ;
+                    entry.extra = 0x0 ;
+                    entry.length = 0x0 ;
+                }
+                else {
+                    // for now, so no
+                    entry.offset = 0xFFFFFFFF ;
+                    entry.extra = 0xFFFFFFFF ;
+                    entry.length = 0xFFFFFFFF ;
+                    
+                }
+            }
+        }
+        entry.save(idx);
+        
+    }
+    std::cout <<"Processed "<<amount_processed<<" entries."<<std::endl;
+    
+}

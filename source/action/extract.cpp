@@ -438,6 +438,7 @@ auto extractAnimation(const argument_t &args, datatype_t type) ->void{
                         }
                         frame.image.saveToBMP(output,args.colorsize);
                      }
+                    framenum++;
                 }
 
             }

@@ -58,15 +58,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "--create"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "--overwrite"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--bmp24"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "--create"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -163,18 +163,34 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "uo/anim2.idx"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "uo/anim2.mul"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "anim_images"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "anim_swap"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "myanim.idx"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "myanim.mul"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "myanim_images"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "myanim_swap"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
