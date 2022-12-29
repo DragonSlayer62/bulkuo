@@ -2,6 +2,10 @@
 **Bulkuo** is for facilitating batch or bulk processing of Ultima Online data.  It allows for 
 extraction, creation, and merging of different UO data types from their individual native
 formats.  These native formats are: image files (bmp, non compressed), wav files, and text files.  
+**Bulkuo**  is at its core, just a formatter. It takes data from one form , and formats it into another.  
+It is not attempting to show how the UO client interprets the data, or display it.  It is setup for a   
+workflow of users building/categorizing assets in a more appropriate form,  and then formatting those  
+assets (automated perhaps) into the UO format.
 General usage is: **bulkuo [flags] type action path,...**.  
 Supported operating systems: *Windows*, *macOS*, and *Linux/BSD*.  It will probably work on  most **Unix** operating systems.  
 **Bulkuo** is a **Command Line** utility.  For *Windows* users, that means one must open a command/terminal prompt (*Windows* start menu, run cmd.exe).  
