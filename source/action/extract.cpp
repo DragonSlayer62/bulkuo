@@ -438,6 +438,11 @@ auto extractAnimation(const argument_t &args, datatype_t type) ->void{
                         }
                         frame.image.saveToBMP(output,args.colorsize);
                      }
+#if defined(DEBUG)
+                    else{
+                        std::cout <<"Empty frame " << framenum<<" on animation: "<<first << std::endl;
+                    }
+#endif
                     framenum++;
                 }
 
