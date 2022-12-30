@@ -85,6 +85,7 @@ auto printHelp() ->void {
     std::cout <<"               uop_path out_directory\n";
     std::cout <<"               huemul_path out_directory\n";
     std::cout <<"               mul_path csv_file out_\n";
+    std::cout <<"               anim_idx_path anim_mul_path image_csv_directory swap_directory\n";
     std::cout <<"        create\n";
     std::cout <<"               directory_path out_idx_path out_mul_path\n";
     std::cout <<"               directory_path out_uop_path \n";
