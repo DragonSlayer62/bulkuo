@@ -379,13 +379,16 @@ auto extractInfo(const argument_t &args, datatype_t type) ->void{
 
 //==================================================================================
 auto extractAnimation(const argument_t &args, datatype_t type) ->void{
-    if (args.paths.size() != 4){
-        throw std::runtime_error("Invalid # of paths, format: idxfile mulfile bmp_csv_directory replaceable_directory ");
+    if (args.paths.size() < 3){
+        throw std::runtime_error("Invalid # of paths, format: idxfile mulfile bmp_csv_directory [replaceable_directory] ");
     }
     auto idxpath = args.paths.at(0);
     auto mulpath = args.paths.at(1);
     auto directory = args.paths.at(2);
-    auto secondary_directory = args.paths.at(3);
+    auto secondary_directory = std::filesystem::path();
+    if (args.paths.size() == 4){
+       secondary_directory = args.paths.at(3);
+    }
     auto amount_processed = 0 ;
     auto idx = std::ifstream(idxpath.string(),std::ios::binary) ;
     if (!idx.is_open()){
@@ -406,12 +409,14 @@ auto extractAnimation(const argument_t &args, datatype_t type) ->void{
             // It can be one of three, it can "replaceable", or a picture, or empty.
             if ((entry.offset == 0) && (entry.length == 0) && (entry.extra == 0) ){
                 // this is a swapable!
-                amount_processed++;
-                auto path = args.filepath(id, secondary_directory, ".swapped");
-                args.writeOK(path);
-                auto output = std::ofstream(path.string());
-                if (!output.is_open()){
-                    throw std::runtime_error("Unable to create: "s+path.string());
+                if (!secondary_directory.empty()){
+                    amount_processed++;
+                    auto path = args.filepath(id, secondary_directory, ".swapped");
+                    args.writeOK(path);
+                    auto output = std::ofstream(path.string());
+                    if (!output.is_open()){
+                        throw std::runtime_error("Unable to create: "s+path.string());
+                    }
                 }
             }
             else if ((entry.offset != 0xFFFFFFFF) && (entry.length > 0) && (entry.extra != 0xFFFFFFFF)){
@@ -440,7 +445,8 @@ auto extractAnimation(const argument_t &args, datatype_t type) ->void{
                      }
 #if defined(DEBUG) || defined(_DEBUG)
                     else{
-                        std::cout <<"Empty frame " << framenum<<" on animation: "<<first << std::endl;
+                        //std::cout <<"Empty frame " << framenum<<" on animation: "<<first << std::endl;
+                        std::cout <<first<<","<<framenum<<std::endl;
                     }
 #endif
                     framenum++;

@@ -1,0 +1,496 @@
+// High level animations
+// 110 ids per creature
+// 0-4 walk
+// 5-9 stand
+// 10-14 die.1
+// 15-19 die.2
+// 20-24 attack1
+// 25-29 attack2
+// 30-34 attack3
+// 35-39 misc.1
+// 40-44 misc roll
+// 45-49 misc2
+// 50-54 stumble
+// 55-59 misc stomp
+// 60-64 misc cast
+// 65-69 get hit 1
+// 70-74 misc3
+// 75-79 get hit.2
+// 80 -84 get hit.3
+// 85 - 89 fidget
+// 90-94 fidget2
+// 95-99 fly
+// 100 - 104 land
+// 105-109 die in fight
+
+high/ogre = 110-219
+high/ettin = 220-329
+high/zombie = 330-439
+high/gargoyle=440-549
+eagle = 550-659
+high/bird=660-769
+high/orc_captain=770-879
+high/corpser_kraken=880-989
+high/daemon_unarmed=990-1099
+high/daemon_sword=1100-1209
+high/dragon_baby=1210-1309
+high/dragon_gray=1320-1429
+high/elemental_air=1430-1539
+high/elemental_earth=1540-1649
+high/elemental_fire=1650-1759
+high/elemental_water=1760-1869
+high/orc_unarmed=1870-1979
+high/ettin_hammer=1980-2089
+high/chimera = 2090-2199
+high/serpent_giant=2310-2419
+high/gazer = 2420-2529
+high/pegasus=2530-2639
+high/lich=2640-2749
+high/shade=2860-2969
+high/troglodyte=2970-3079
+high/spider_giant=3080-3189
+high/ape=3190-3299
+high/harpie=3300-3409 
+high/headless=3410-3519
+high/lizardman_unarmed=3630-3739
+high/lizardman_spear=3850-3959
+high/lizardman_mace=3960-4069
+high/mongbat_imp=4290-4399
+high/orc_club=4510-4619
+high/ratman_unarmed=4620-4729
+high/ratman_axe=4840-4949
+high/ratman_sword=4950-5059
+high/reaper=5170-5279
+high/scorpion_giant=5280-5389
+high/skeleton_unarmed=5500-5609
+high/slime_ooze=5610-5709
+high/snake=5720-5829
+high/troll_axe=5830-5939
+high/troll_unarmed=5940-6049
+high/troll_maul=6050-6159
+high/skeleton_axe=6160-6269
+high/skeleton_schimitar=6270-6379
+high/wisp=6380-6489
+high/dragon_red=6490-6599
+high/drake_gray=6600-6709
+high/drake_red=6710-6819
+high/horse_barded=7260-7369
+high/satyr=7590-7699
+high/terathen_warrior=7700-7809
+high/terathen_drone=7810-7919
+high/terathen_matriarch=7920-8029
+high/satyr_archer=8030_8139
+high/titan=8250-8359
+high/cyclops=8360-8469
+high/toad_giant=8800-8909
+high/frog_bull=8910-9019
+high/ophidian_mage=9350-9459
+high/ophidian_warrior=9460-9569
+high/ophidian_queen=9570-9679
+high/beastlord=9680-9789
+high/umberhulk=10120-10229
+high/unknown_seacreature=10450-10559
+high/licheking = 11770-11879
+high/minatour=11880-11989
+high/death_saalad=11990-12099
+high/mindflayer=12210-12319
+high/bugbear=12320-12429
+high/horse_amored=12430-12539
+high/yeti=14960-15069
+high/ignus=15840-15949
+high/eyewing=15950-16059
+high/seaserpent=16500-16609
+high/dophin=16610-16719
+
+// Low detail animations 65 anim ids
+// 0-4 walk
+// 5-9 run
+// 10-14 stand
+// 15-19 graze
+// 20-24 unknown
+// 25-29 attack1
+// 30-34 attack2
+// 35-39 attack3
+// 40-44 die.1
+// 45-49 fidget1
+// 50-54 fidget2
+// 55-59 lie down
+// 60-64 die.2
+
+low/horse_lightbrown=22000-22064
+low/cat_hellcat=22065-22129
+low/alligator=22130-22194
+low/pig=22195-22259
+low/horse_darkbrown=22260-22329
+low/bunny=22325-22389
+low/lavalizard=22390-22454
+low/sheep_unsheared=22455-22519
+low/chicken=22520-22584
+low/goat=22585-22649
+low/ostrard_desert=22650-22714
+low/bear_darkbrown=22715-22779
+low/bear_lightbrown=22780-22844
+low/bear_polar=22845-22909
+low/panther=22910-22974
+low/rat_giant=22975-23039
+low/cow_blackwhite=23040-23104
+low/dog=23105-23169
+low/ostard_frenzied=23170-23234
+low/ostard_forest=23235-23299
+low/llama=23300-23364
+low/walrus=23365-23429
+low/walrus2=23430-23494
+low/sheep_sheered=23495-23559
+low/wolf_hellhound=23625-23689
+low/horse_lightgray=23690-23754
+low/horse_graybrown=23820-23884
+low/cow_brown=24015-24079
+low/bull_brown=24080-24144
+low/bull_blackwhite=24145-24209
+low/greathart=24210-24274
+low/deer=24405-24469
+low/rat=24470-24534
+low/wolf_giant=27850-27914
+low/horse_pack=27915-27979
+low/llama_pack=27980-28044
+
+// access/character 175 animation ids
+// 0 walk unarmed
+// 5 walk armed
+// 10 run unarmed
+// 15 run armed
+// 20 stand
+// 25 fidget.3 
+// 30 fidget2
+// 35 stand for one handed attack
+// 40 stand for two handed attack
+
+people/man=35000-35174
+people/woman=35175-35349
+accessory/hat/floppy=35700-35874
+accessory/hat/two_pointed=35875-36049
+accessory/hat/cap=36050-36234
+accessory/hat/straw/tall=36225-36399
+accessory/hat/straw=36400-36574
+accessory/hat/widebrim=36575-36749
+accessory/hat/skullcap=36750-36924
+accessory/hat/feathered=36925-37099
+accessory/hat/pirate=37100-37274
+accessory/hat/jesters=37275-37449
+accessory/mask/bear=37450-37624
+accessory/mask/deer=37625-37799
+accessory/mask/orc=37800-37974
+accessory/mask/tribal1=37975-38149
+accessory/mask/tribal2=38150-38324
+accessory/hat/bandanna=38325-38499
+accessory/mount/horse_armored=38500-38764
+people/boy_brunette=38675-38849
+accessory/mount/pegasus=38850-39024
+people/girl_brunette=39025-39199
+accessory/mount/gaman=39725-39899
+accessory/pants/short=40250-40424
+accessory/pants/long=40425-40599
+accessory/shirt/sleeveless=40950-41124
+accessory/shirt/fancy=41125-41299
+
+accessory/mount/dragon_skeletal=41300-41374
+accessory/mount/drake=41475-41649
+accessory/mount/wolf_giant=41650-41824
+accessory/mount/spider_giant=41825-42174
+accessory/mount/bear_polar=42175-42349
+accessory/dress/long=43225-43399
+accessory/dress/fancy=43400-43574
+accessory/skirt/long=43575-43749
+accessory/skirt/kilt=44625-44799
+accessory/apron/long=46375-46549
+accessory/apron/short=46550-46724
+accessory/cape=46900-47074
+accessory/robe=47075-47249
+accessory/boots/thigh=48300-48474
+accessory/boots = 48475-48649
+accessory/shoes/sandals=48825-48999
+accessory/shoes=49000-49174
+accessory/sash=50750-50924
+accessory/unknown1=50925-51099
+accessory/hat/headband=51100-51284
+accessory/light/lantern/lit=52500-52674
+accessory/light/torch/lit=52675-52849
+accessory/light/candle/lit=52850-53024
+accessory/light/lantern/unlit=53025-53199
+accessory/light/torch/unlit=53200-53374
+accessory/light/candle/unlit=53375-53549
+accessory/armor/breastpiece/leather_studded=56175-56349
+accessory/armor/arms/leather_studded=56525-56699
+accessory/armor/gorget/leather_studded=56875-57049
+accessory/armor/breastpiece/plate=57225-57399
+accessory/armor/arms/plate=57400-57574
+accessory/armor/leggings/plate=57575-57749
+accessory/armor/gloves/plate=57750-57924
+accessory/armor/gorget/plate=57925-58099
+accessory/armor/breastpiece/chainmail=59150-59324
+accessory/armor/leggings/chainmail=59500-59674
+accessory/armor/breastpiece/leather=59850-60024
+accessory/armor/leggings/leather=60025-60199
+accessory/armor/arms/leather=60200-60374
+accessory/armor/gloves/leather=60375-60549
+accessory/armor/gorget/leather=60550-60724
+accessory/armor/breastpiece/ring=60900-61074
+accessory/armor/leggings/ring=61075-61249
+accessory/armor/arms/ring=61250-61424
+accessory/armor/breastpiece/bone=61950-62124
+accessory/armor/leggings/bone=62125-62299
+accessory/armor/arms/bone=62300-62474
+accessory/armor/gloves/bone=62475-62649
+accessory/wings=62650-62824
+
+accessory/armor/head/leather_cap=63000-63174
+accessory/armor/head/chainmail_coif=63175-63349
+accessory/armor/head/bone_helm=63350-63524
+accessory/armor/head/plate_helm=63525-63699
+accessory/armor/head/bascinet=63700-63874
+accessory/armor/head/helmet=63875-64049
+accessory/armor/head/kubuto=64050-64224
+monster/death_vortex=65275-65449
+monster/bladed_spirit=65450-65624
+accessory/armor/shield/round=65800-65974
+accessory/armor/shield/bronze=65975-66149
+accessory/armor/shield/wooden=66150-66324
+accessory/armor/shield/tiny=66325-66499
+accessory/armor/shield/wooden_kite=66500-66674
+accessory/armor/shield/metal_kite=66675-66849
+accessory/armor/shield/heater=66850-68424
+accessory/armor/shield/cavalry=68425-68599
+accessory/armor/shield/elven=68600-68774
+accessory/armor/shield/sea_elven=68775-68949
+accessory/armor/shield/knights=68950-69124
+accessory/weapon/axe/battle=71925-72099
+accessory/weapon/axe=72100-72274
+accessory/weapon/axe/executioners=72275-72449
+accessory/weapon/axe/hatchet=72625-72799
+accessory/weapon/bardiche=72450-72624
+accessory/weapon/bow/crossbow/heavy=72800-72974
+accessory/weapon/staff/black=72975-73149
+accessory/weapon/sword=73150-73324
+accessory/weapon/cleaver=73325-73499
+accessory/weapon/club=73500-73674
+accessory/weapon/crook=73675-73849
+accessory/weapon/dagger=73850-74024
+accessory/weapon/cutlass=74025-74199
+accessory/weapon/halberd=74200-74374
+accessory/weapon/hammer_pick=74375-74549
+accessory/weapon/spear=74550-74724
+accessory/weapon/skinning_knife=74725-74899
+accessory/weapon/staff/gnarled=74900-75074
+accessory/weapon/katana=75075-75249
+accessory/weapon/kriss=75250-75424
+accessory/weapon/mace=75425-75774
+accessory/weapon/maul=75775-75949
+accessory/weapon/axe/battle/large=75950-76124
+accessory/weapon/pick=76125-76299
+accessory/weapon/pitch_fork=76300-76474
+accessory/weapon/scimitar=76475-76649
+accessory/weapon/sword/short=76650-76824
+accessory/weapon/spear/short=76825-76999
+accessory/weapon/hammer=77000-77174
+accessory/weapon/spear=77175-77349
+accessory/weapon/war_mace=77350-77524
+accessory/weapon/sword/viking=77525-77699
+accessory/weapon/axe/war=77700-77874
+accessory/weapon/war_fork=77875-78049
+accessory/weapon/war_hammer=78050-78399
+accessory/weapon/quarter_staff=78400-78574
+accessory/weapon/bow=78575-78924
+accessory/weapon/bow/crossbow=78925-79274
+accessory/weapon/axe/unknown=79275-79449
+
+accessory/components/hair/short=87500-87674
+accessory/components/hair/long=87675-87849
+accessory/components/hair/ponytail=87850-88024
+accessory/components/hair/mohawk=88025-88199
+accessory/components/hair/shoulder=89250-89424
+accessory/components/hair/buns=89600-89774
+accessory/components/facialhair/gotee=105000-105174
+accessory/components/facialhair/long=105175-105349
+accessory/components/facialhair/short=105350-105524
+accessory/components/facialhair/mustache=105525-105699
+
+misc/horse/white=108500-108674
+misc/horse/brown=109200-109374
+misc/raptor/brown=109375-109549
+misc/raptor/gray=109550-109724
+misc/raptor/king=109725-109899
+misc/llama=109900-110074
+misc/horse/white/two=113050-113224
+misc/horse/white_brown=113400-113574
+
+accessory/components/hair/short/two=122500-122674
+accessory/components/hair/receeding=122675-122849
+accessory/components/hair/pigtails=122850-123024
+accessory/components/hair/topknot=123025-123199
+accessory/components/facialhair/short/two=123200-123374
+accessory/components/facialhair/long/two=123375-123549
+accessory/components/facialhair/gotee/two=123550-123724
+
+accessory/cloth/tunic=124075-124249
+accessory/cloth/tabbard/plain=124250-124424
+accessory/cloth/tabbard/checkered=124425-124599
+accessory/cloth/jester=124600-124774
+accessory/cloth/shirt/plain=124775-124949
+accessory/cloth/shirt/collared=124950-125124
+accessory/saddle=126700-126874
+
+
+accessory/armor/female/one=126175-126349
+accessory/armor/female/two=126350-126524
+accessory/armor/female/three=126525-126699
+accessory/armor/female/four=126700=126874
+accessory/armor/female/five=126875-127049
+accessory/armor/female/skirt/leather=127050-127224
+accessory/armor/female/shorts/leather=127225-127399
+accessory/armor/head/helm/close=127400-127574
+accessory/armor/head/helm/norse=127575-127749
+people/dwarf=130200-130374
+people/ghost=134750-134924
+accessory/skirt/long/two=134925-135099
+accessory/fishing_rod=135100-135274
+accessory/armor/head/helm/orc=135275-135449
+accessory/weapon/wand/one=136500-136674
+accessory/weapon/wand/two=136675-136849
+accessory/weapon/wand/three=136850-137024
+accessory/weapon/wand/four=137025-137199
+
+accessory/weapon/spellbook/one=137200-137374
+accessory/weapon/spellbook/two=137375-137549
+accessory/armor/female/breastpiece/chainmail=137550-137724
+people/counselor=137725-137899
+accessory/shirt/six = 137900-138249
+people/lord_british=138250-138424
+people/blackthorne=138425-138599
+accessory/armor/shield/order=138600-138774
+accessory/armor/shield/chaos=138775-138949
+people/dupree = 138950-139124
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

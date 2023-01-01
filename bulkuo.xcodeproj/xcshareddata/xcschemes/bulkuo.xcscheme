@@ -31,7 +31,7 @@
       </Testables>
    </TestAction>
    <LaunchAction
-      buildConfiguration = "Debug"
+      buildConfiguration = "Release"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
@@ -154,19 +154,19 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "uo/anim.idx"
+            argument = "uo/anim5.idx"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "uo/anim.mul"
+            argument = "uo/anim5.mul"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "anim_images"
+            argument = "anim5_images"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "anim_swap"
+            argument = "anim5_swap"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

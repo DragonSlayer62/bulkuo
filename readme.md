@@ -63,7 +63,8 @@ Bulkuo can process various data types of uo data.
 ### --animation   
 This will extract animations from an idx/mul file combination.  It takes two directories for output. The first directory is
 for entries that have actual data, so bmps and csv data will be placed there. The second directory is a list of files with the id that 
-indicates for that entry, no data is available, but it is an valid id, that can be substituted by information in the client text files.
+indicates for that entry, no data is available, but is marked differntly. This is optional, and if not present, these entries  
+will be treated the same as the other non data entries.
 These entires are used on creation/merging to  endure the created idx/mul does not lose this information (and one can change it).
 The csv files created, indicates for each animation id, how many frames exist, an for each frame, if it has an image, and the centerX,centerY
 for the offset when drawing that image.  Frames are labeled as: animationID.frameID[-label].bmp , where the [-label] is only present 

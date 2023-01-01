@@ -67,6 +67,7 @@ auto printHelp() ->void {
     std::cout <<"        --name              (For 'info,multi,sound,hue' will generate names for an id if one is present)\n";
     std::cout <<"        --merge             (Will merge the data into an existing uo format)\n";
     std::cout <<"    Data (one of the following)\n";
+    std::cout <<"        --animation         (animation  data, bmp files and csv files)\n";
     std::cout <<"        --art               (art  data, bmp files)\n";
     std::cout <<"        --gump              (gump  data, bmp files)\n";
     std::cout <<"        --hue               (hue data, bmp and txt files)\n";
@@ -85,17 +86,19 @@ auto printHelp() ->void {
     std::cout <<"               uop_path out_directory\n";
     std::cout <<"               huemul_path out_directory\n";
     std::cout <<"               mul_path csv_file out_\n";
-    std::cout <<"               anim_idx_path anim_mul_path image_csv_directory swap_directory\n";
+    std::cout <<"               anim_idx_path anim_mul_path image_csv_directory [swap_directory]\n";
     std::cout <<"        create\n";
     std::cout <<"               directory_path out_idx_path out_mul_path\n";
     std::cout <<"               directory_path out_uop_path \n";
     std::cout <<"               directory out_huemul_path \n";
     std::cout <<"               info_csv_file out_mul_path \n";
+    std::cout <<"               image_csv_directory [swap_directory] anim_idx_path anim_mul_path\n";
     std::cout <<"        merge (creates \".bulkuo\" versions of the uo format)\n";
     std::cout <<"               directory_path in_idx_path in_mul_path\n";
     std::cout <<"               directory_path in_uop_path \n";
     std::cout <<"               directory in_huemul_path \n";
     std::cout <<"               csv_file in_mul_path \n";
+    std::cout <<"               image_csv_directory [swap_directory] anim_idx_path anim_mul_path\n";
     std::cout <<"        name\n";
     std::cout <<"               hue_mul_path out_name_file\n";
     std::cout <<"               sound_idx_path sound_mul_path out_name_file\n";

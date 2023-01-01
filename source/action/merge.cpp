@@ -342,13 +342,19 @@ auto infoMerge(const argument_t &args,datatype_t type) ->void {
 };
 //================================================================================
 auto mergeAnimationMul(const argument_t &arg,datatype_t type) ->void {
-    if (arg.paths.size()!=4){
-        throw std::runtime_error("Invalid number of paths, format is: csv_bmp_directory replaceable_directory idxinput mulinput");
+    if (arg.paths.size()<3){
+        throw std::runtime_error("Invalid number of paths, format is: csv_bmp_directory [replaceable_directory] idxoutput muloutput");
     }
     auto directory = arg.paths.at(0) ;
-    auto second_directory = arg.paths.at(1) ;
-    auto idxpath = arg.paths.at(2) ;
-    auto mulpath = arg.paths.at(3) ;
+    auto second_directory = std::filesystem::path() ;
+    auto pathindex = 1 ;
+    if (arg.paths.size()==4){
+        second_directory=arg.paths.at(pathindex);
+        pathindex++;
+    }
+    auto idxpath = arg.paths.at(pathindex) ;
+    pathindex++;
+    auto mulpath = arg.paths.at(pathindex) ;
     auto idxoutpath = idxpath ;
     idxoutpath.replace_extension(std::filesystem::path(idxoutpath.extension().string()+".bulkuo"s));
     auto muloutpath = mulpath ;
@@ -356,7 +362,10 @@ auto mergeAnimationMul(const argument_t &arg,datatype_t type) ->void {
     arg.writeOK(idxoutpath);
     arg.writeOK(muloutpath);
     auto anims = contentsFor(directory, ".csv") ;
-    auto replaceable = contentsFor(second_directory, ".swapped");
+    auto replaceable = std::map<std::uint32_t,std::filesystem::path>() ;
+    if (!second_directory.empty()){
+        replaceable = contentsFor(second_directory, ".swapped");
+    }
     if (anims.empty()) {
         throw std::runtime_error("Found no animations (.csv) in : "s+directory.string()) ;
     }
