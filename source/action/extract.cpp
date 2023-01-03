@@ -110,8 +110,10 @@ auto extractUOP(const argument_t &args, datatype_t type) ->void{
                     switch(type){
                         case datatype_t::gump:{
                             auto bitmap = bitmap_t<std::uint16_t>();
-                            bitmap = bitmapForGump(buffer);
-                            bitmap.saveToBMP(output,args.colorsize);
+                            if (buffer.size() > 10) {
+                                bitmap = bitmapForGump(buffer);
+                                bitmap.saveToBMP(output, args.colorsize);
+                            }
                             break;
                         }
                         case datatype_t::art:{
@@ -231,8 +233,12 @@ auto extractIdxMul(const argument_t &args, datatype_t type) ->void{
                         std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra),reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,temp.begin()+4);
                         std::copy(reinterpret_cast<const std::uint8_t*>(&entry.extra)+2,reinterpret_cast<const std::uint8_t*>(&entry.extra)+4,temp.begin());
                         temp.insert(temp.end(),buffer.begin(),buffer.end());
-                        bitmap = bitmapForGump(temp);
-                        bitmap.saveToBMP(output,args.colorsize);
+                        if (temp.size() >10){
+                      
+                            bitmap = bitmapForGump(temp);
+                            bitmap.saveToBMP(output,args.colorsize);
+                        }
+                       
                         break;
                     }
                     case datatype_t::art: {
