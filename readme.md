@@ -70,9 +70,9 @@ The csv files created, indicates for each animation id, how many frames exist, a
 for the offset when drawing that image.  Frames are labeled as: animationID.frameID[-label].bmp , where the [-label] is only present 
 if the --label option is used.  
 ### --art  
-This will extract or ingest bmp files for art images. IDs from 0 to 0x3FFF must be 44 x 44 pixels.  
+This will extract or ingest bmp files for art images. IDs from 0 to 0x3FFF must be 44 x 44 pixels. This supports idx/mul and uop uo files.  
 ### --gump  
-This will extract or ingest bmp files for a gump.  
+This will extract or ingest bmp files for a gump.  This supports idx/mul and uop uo files.
 ### --hue =[width,height]  
 This will extract a bmp file for the color range, with a secondary text file for the text string.  The optional
 width,height on the --hue is for extraction only. It specified the cell size to use for each color (so the total bmp
@@ -83,10 +83,10 @@ This will extract or ingest the the information data about a tile normally conta
 ### --light  
 This will extract or ingest bmp files for a light entry. The last channel (blue) is used for the value , as this is a grayscale.  
 ### --multi  
-This will extract or ingest commas separated file (csv) for a multi entry.  
+This will extract or ingest commas separated file (csv) for a multi entry.  This supports idx/mul and uop files.
 ### --sound  
 This will extract or ingest wav files. There is a seconary file(txt), which is the an internal text string for an entry.
-If that secondary file is not present, an empty text string will be used for creation/merging.  
+If that secondary file is not present, an empty text string will be used for creation/merging.  This supports idx/mul and uop files. 
 ### --texture  
 This will extract or ingest bmp files.  They must be 64 x 64 or 128 x 128 pixels in size.  
 ## Actions  
